@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files
+*.db
+*.sqlite
+data/
+
+# Environment
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
