@@ -57,13 +57,25 @@ def clean_data(df):
         '建物現況格局-隔間', '有無管理組織', '總價元', '單價元平方公尺', '車位類別', '車位移轉總面積平方公尺', '車位總價元',
         '備註', '編號', '主建物面積', '附屬建物面積', '陽台面積', '電梯', '移轉編號'],
     '''
+    if df is None or df.empty:
+        raise ValueError("input Dataframe is empty")
 
     # Remove duplicate header row
     df = df.iloc[1:].reset_index(drop=True)
 
-    df = df[['交易年月日', '土地位置建物門牌', '總價元',
-           '建物移轉總面積平方公尺', '單價元平方公尺',
-           '建物型態', '鄉鎮市區']]
+    BASE_COLUMNS = [
+        '交易年月日', '土地位置建物門牌', '總價元',
+        '建物移轉總面積平方公尺', '單價元平方公尺',
+        '建物型態', '鄉鎮市區'
+    ]
+
+    EXTRA_COLUMNS = [
+        '車位總價元',
+        '車位移轉總面積平方公尺',
+        '主建物面積'
+    ]
+
+    df = df[BASE_COLUMNS]
     
     df = df.rename(columns={
         "交易年月日": "date",
@@ -75,12 +87,52 @@ def clean_data(df):
         "鄉鎮市區": "district"
     })
 
+    # Strip whitespace
+    df['address'] = df['address'].str.strip()
+    df['district'] = df['district'].str.strip()
+
+    # Handle weird numeric values
+    df['price'] = df['price'].astype(str).str.replace(',','')
+    df['area'] = df['area'].astype(str).str.replace(',','')
+
     # Convert numeric fields
     df['price'] = pd.to_numeric(df['price'], errors='coerce')
     df['area'] = pd.to_numeric(df['area'], errors='coerce')
     df['price_per_sqm'] = pd.to_numeric(df['price_per_sqm'], errors='coerce')
 
+    # Convert date properly
+    df['date'] = df['date'].astype(str).str.zfill(7)
+    df['year'] = df['date'].str[:3].astype(int) + 1911
+    df['month'] = df['date'].str[3:5]
+    df['day'] = df['date'].str[5:7]
+    df['date'] = pd.to_datetime(
+        df['year'].astype(str) + '-' + df['month'] + '-' + df['day'],
+        errors='coerce'
+    )
+    df = df.drop(columns=['year','month','day'])
+
+    # Remove impossible values
+    df = df[df['price'] > 0]
+    df = df[df['area'] > 0]
+
+    # Detect outliers (simple version)
+    df = df[df['price'] < 1e9]
+    df = df[df['area'] < 1000]
+
+    # Recompute price_per_sqm
+    df['computed_price_per_sqm'] = (df['price'] / df['area']).round()
+    df['price_diff'] = abs(df['computed_price_per_sqm'] - df['price_per_sqm'])
+
+    # NOTE:
+    # price_per_sqm may not equal price / area due to:
+    # - parking space inclusion
+    # - different area definitions
+    # - source rounding
+
     df = df.dropna(subset=['price', 'area'])
+
+    print(f"Final rows: {len(df)}")
+    print(f'Missing price_per_sqm: {df['price_per_sqm'].isna().sum()}')
 
     return df
 
