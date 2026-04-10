@@ -93,51 +93,88 @@ Understand pricing patterns and identify data issues.
 
 ---
 
-## 🔄 Day 3 — Data Refinement & Feature Engineering (In Progress)
+## ✅ Day 3 — Data Refinement & Feature Engineering (Completed)
 
 ### Objective
 
-Improve accuracy of pricing metrics by incorporating missing components (e.g. parking).
+Improve accuracy and reliability of pricing metrics by refining calculation logic and handling missing/inconsistent data.
 
-### Tasks
+### Completed
 
-- Update ingestion pipeline to include:
+- Enhanced ingestion pipeline with additional fields:
 
-  - `parking_price` (車位總價元)
-  - `parking_area` (車位移轉總面積平方公尺)
-  - `main_building_area` (主建物面積)
+  - `parking_price`
+  - `parking_area`
+  - `main_area`
 
-- Clean and convert new columns to numeric
+- Implemented **conditional pricing logic**:
 
-- Create improved pricing features:
+  - If parking data is available → exclude parking from both price and area
+  - Otherwise → fallback to total price and total area
 
-  - `net_price = price - parking_price`
-  - `net_area = area - parking_area`
-  - `net_price_per_sqm = net_price / net_area`
+- Added **fallback logic for missing `price_per_sqm`**:
 
-- Re-evaluate discrepancies between:
+  - Use computed `price / area` when original value is missing
 
-  - original `price_per_sqm`
-  - computed values
-  - net values
+- Introduced new features:
 
-- Implement fallback logic:
-  - Fill missing `price_per_sqm` using computed values
+  - `net_price`, `net_area`
+  - `net_price_per_sqm`
+  - `final_price_per_sqm`
+  - `pricing_method` (original / net_adjusted / fallback_computed)
 
-### Output
+- Re-evaluated discrepancies between:
+  - original vs computed vs adjusted pricing
 
-- More accurate and reliable dataset
-- Clear explanation of pricing discrepancies
+### Key Findings
+
+- `price_per_sqm` is **context-dependent**, not a simple ratio:
+
+  - Strongly affected by parking inclusion/exclusion
+
+- Raw dataset contains **heterogeneous transaction types**:
+
+  - e.g. housing, land, parking
+
+- Identified an important missing feature:
+
+  - `交易標的` (transaction type)
+
+- Observed that:
+  - Land transactions → building area = 0 → invalid for current calculations
+  - Parking-only transactions → `price_per_sqm` is naturally missing
+
+### Implication
+
+- Current dataset mixes **non-comparable transaction types**
+- Some rows violate assumptions behind `price_per_sqm`
+- A **data scope definition problem** exists (not just a calculation issue)
+
+→ Decision:
+
+- For MVP, prioritize **data consistency via filtering**
+- Defer full multi-type handling to later phases
 
 ---
 
-## 📊 Day 4 — Visualization & Insight Communication (Planned)
+## 📊 Day 4 — Data Scope Refinement & Visualization (Planned)
 
 ### Objective
 
-Transform refined data into clear and compelling visual insights.
+Ensure dataset consistency and begin producing meaningful visual insights.
 
 ### Tasks
+
+**Data Scope Refinement (High Priority)**
+
+- Include `transaction_type` (`交易標的`) in cleaned dataset
+- Filter dataset to **housing-related transactions only**
+  - Exclude land-only and parking-only records
+- Validate impact of filtering on:
+  - distribution
+  - pricing metrics
+
+**Visualization**
 
 - Finalize distribution plots:
 
@@ -145,24 +182,33 @@ Transform refined data into clear and compelling visual insights.
   - area (log scale)
 
 - Create district-level comparisons:
+  - average / median price per sqm
+  - transaction volume
 
-  - average / median price per sqm (bar charts)
-  - transaction volume by district
+---
+
+## 📊 Day 5 — Insight Generation & Storytelling (Planned)
+
+### Objective
+
+Turn analysis into clear, structured insights.
+
+### Tasks
 
 - Build time-based analysis:
 
   - monthly price trends
   - transaction volume over time
 
-- Refine existing plots:
-  - improve labeling and readability
-  - ensure consistency in styling
-  - remove unnecessary clutter
+- Improve visualization quality:
 
-### Output
+  - labeling
+  - readability
+  - consistency
 
-- 3–5 high-quality visualizations
-- Clear and interpretable data story
+- Identify and document key insights:
+  - pricing differences across districts
+  - trend patterns over time
 
 ---
 
@@ -170,20 +216,55 @@ Transform refined data into clear and compelling visual insights.
 
 Phase 1 will be considered complete when:
 
-- Dataset is clean and analysis-ready
-- Pricing logic is accurate and validated
+- Dataset is **clean, consistent, and scoped to valid housing transactions**
+- Pricing logic (`price_per_sqm`) is:
+  - clearly defined
+  - consistently applied
+  - documented with assumptions
 - Core descriptive insights are generated
-- At least 3 meaningful visualizations are created
-- Key findings are documented
+- At least 3–5 meaningful visualizations are created
+- Key findings and limitations are documented
 
 ---
 
-# Future Work (To Be Defined)
+# Future Work & Improvements (Post-MVP)
 
-The following areas are planned for later phases:
+### Data Modeling
+
+- Handle different transaction types separately:
+
+  - housing
+  - land
+  - parking
+
+- Define **type-specific metrics**:
+
+  - housing → price per sqm
+  - land → price per land area
+  - parking → price per unit
+
+- Consider splitting dataset or introducing a normalized schema
+
+---
+
+### Pipeline Enhancements
+
+- Modularize ingestion pipeline further
+- Add data validation checks by transaction type
+- Implement logging and monitoring
+
+---
+
+### Analysis & Product
 
 - Interactive dashboard (Streamlit)
 - Geographic visualization (map-based analysis)
-- Automated data ingestion (e.g. scheduled updates)
-- Data enrichment (external datasets)
-- Feature engineering and predictive modeling
+- Automated data ingestion (scheduled updates)
+
+---
+
+### Advanced Analytics
+
+- Feature engineering for modeling
+- Predictive modeling (price estimation)
+- External data enrichment (e.g. demographics, transport)
