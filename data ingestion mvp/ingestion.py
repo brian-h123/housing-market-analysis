@@ -75,7 +75,7 @@ def clean_data(df):
         '主建物面積'
     ]
 
-    df = df[BASE_COLUMNS]
+    df = df[BASE_COLUMNS + EXTRA_COLUMNS]
     
     df = df.rename(columns={
         "交易年月日": "date",
@@ -84,7 +84,10 @@ def clean_data(df):
         "建物移轉總面積平方公尺": "area",
         "單價元平方公尺": "price_per_sqm", # contains missing value
         "建物型態": "building_type",
-        "鄉鎮市區": "district"
+        "鄉鎮市區": "district",
+        "車位總價元": "parking_price",
+        "車位移轉總面積平方公尺": "parking_area",
+        "主建物面積": "main_area"
     })
 
     # Strip whitespace
@@ -94,11 +97,25 @@ def clean_data(df):
     # Handle weird numeric values
     df['price'] = df['price'].astype(str).str.replace(',','')
     df['area'] = df['area'].astype(str).str.replace(',','')
+    df['parking_price'] = df['parking_price'].astype(str).str.replace(',','')
+    df['parking_area'] = df['parking_area'].astype(str).str.replace(',','')
+    df['main_area'] = df['main_area'].astype(str).str.replace(',','')
 
     # Convert numeric fields
     df['price'] = pd.to_numeric(df['price'], errors='coerce')
     df['area'] = pd.to_numeric(df['area'], errors='coerce')
+    df['parking_price'] = pd.to_numeric(df['parking_price'], errors='coerce')
+    df['parking_area'] = pd.to_numeric(df['parking_area'], errors='coerce')
+    df['main_area'] = pd.to_numeric(df['main_area'], errors='coerce')
     df['price_per_sqm'] = pd.to_numeric(df['price_per_sqm'], errors='coerce')
+
+    # Fillna for parking
+    df['parking_price'] = df['parking_price'].fillna(0)
+    df['parking_area'] = df['parking_area'].fillna(0)
+
+    # Engineer new features
+    df['net_price'] = df['price'] - df['parking_price']
+    df['net_area'] = df['area'] - df['parking_area']
 
     # Convert date properly
     df['date'] = df['date'].astype(str).str.zfill(7)
@@ -121,7 +138,23 @@ def clean_data(df):
 
     # Recompute price_per_sqm
     df['computed_price_per_sqm'] = (df['price'] / df['area']).round()
+    df['net_price_per_sqm'] = (df['net_price'] / df['net_area']).round()
     df['price_diff'] = abs(df['computed_price_per_sqm'] - df['price_per_sqm'])
+    df['net_price_diff'] = abs(df['net_price_per_sqm'] - df['price_per_sqm'])
+
+    # Final pricing
+    df['final_price_per_sqm'] = df['price_per_sqm']
+    ## When parking area > 0
+    mask = (df['parking_price'] > 0) & (df['parking_area'] > 0)
+    df.loc[mask, 'final_price_per_sqm'] = df['net_price_per_sqm']
+    ## When parking area == 0 -> use original price_per_sqm
+    ## When price_per_sqm missing -> fallback
+    df.loc[df['final_price_per_sqm'].isna(), 'final_price_per_sqm'] = df['computed_price_per_sqm']
+
+    # Pricing method label
+    df['pricing_method'] = 'original'
+    df.loc[mask, 'pricing_method'] = 'net_adjusted'
+    df.loc[df['price_per_sqm'].isna(), 'pricing_method']  = 'fallback_computed'
 
     # NOTE:
     # price_per_sqm may not equal price / area due to:
