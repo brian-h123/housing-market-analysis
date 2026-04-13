@@ -157,33 +157,35 @@ Improve accuracy and reliability of pricing metrics by refining calculation logi
 
 ---
 
-## 📊 Day 4 — Data Scope Refinement & Visualization (Planned)
+## ✅ Day 4 — Data Scope Refinement & Visualization (Completed)
 
 ### Objective
 
 Ensure dataset consistency and begin producing meaningful visual insights.
 
-### Tasks
+### Completed
 
-**Data Scope Refinement (High Priority)**
+**Data Scope Refinement**
 
-- Include `transaction_type` (`交易標的`) in cleaned dataset
-- Filter dataset to **housing-related transactions only**
-  - Exclude land-only and parking-only records
-- Validate impact of filtering on:
-  - distribution
-  - pricing metrics
+- Included `transaction_type` in dataset
+- Filtered dataset to housing-related transactions only (`房地`)
+- Removed land-only and parking-only records
+- Validated dataset consistency after filtering
 
 **Visualization**
 
-- Finalize distribution plots:
+- Generated distribution plots:
+  - log(price)
+  - log(area)
+- Built key comparison charts:
+  - price vs area
+  - district-level price metrics
 
-  - price (log scale)
-  - area (log scale)
+### Key Outcome
 
-- Create district-level comparisons:
-  - average / median price per sqm
-  - transaction volume
+- Dataset is now **consistent and comparable**
+- `price_per_sqm` is now meaningful across observations
+- Established a reliable foundation for insight generation
 
 ---
 
@@ -191,26 +193,60 @@ Ensure dataset consistency and begin producing meaningful visual insights.
 
 ### Objective
 
-Turn analysis into clear, structured insights.
+Transform analysis results into clear, structured insights.
 
 ### Tasks
 
-- Build time-based analysis:
+- Perform time-based analysis:
 
-  - monthly price trends
-  - transaction volume over time
+  - Monthly average price per sqm
+  - Transaction volume over time
 
 - Improve visualization quality:
 
-  - labeling
-  - readability
-  - consistency
+  - Add clear titles and labels
+  - Fix overlapping text and readability issues
+  - Ensure consistent formatting
 
-- Identify and document key insights:
-  - pricing differences across districts
-  - trend patterns over time
+- Identify key insights:
+
+  - Pricing differences across districts
+  - Trends over time (growth, decline, stability)
+
+- Document findings:
+  - Summarize key observations
+  - Highlight notable patterns and anomalies
 
 ---
+
+## 📊 Day 6 — Analytical Deep Dive
+
+### Objective
+
+Deepen analysis and validate pricing logic and data reliability.
+
+### Tasks
+
+- Analyze pricing methods:
+
+  - Compare `original`, `net_adjusted`, and `fallback_computed`
+  - Evaluate differences in price per sqm
+
+- Perform district segmentation:
+
+  - Rank districts by price per sqm
+  - Compare top vs bottom districts
+  - Identify pricing patterns and gaps
+
+- Conduct data quality checks:
+
+  - Measure usage of each pricing method
+  - Analyze discrepancies (`price_diff`, `net_price_diff`)
+  - Assess reliability of computed values
+
+- Summarize findings:
+  - Highlight key patterns and inconsistencies
+  - Identify strengths and limitations of the dataset
 
 # Phase Completion Criteria
 
