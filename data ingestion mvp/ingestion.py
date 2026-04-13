@@ -16,8 +16,8 @@ def fetch_data():
         print('Downloading data')
         # Download
         response = requests.get(url)
-        print(f'Status Code: {response.status_code}')
-        print(f'Content-Type: {response.headers.get('Content-Type')}') # should contain zip
+        print(f"Status Code: {response.status_code}")
+        print(f"Content-Type: {response.headers.get('Content-Type')}") # should contain zip
         response.raise_for_status()
     
         # Load Zip
@@ -64,9 +64,14 @@ def clean_data(df):
     df = df.iloc[1:].reset_index(drop=True)
 
     BASE_COLUMNS = [
-        '交易年月日', '土地位置建物門牌', '總價元',
-        '建物移轉總面積平方公尺', '單價元平方公尺',
-        '建物型態', '鄉鎮市區'
+        '交易年月日',
+        '土地位置建物門牌',
+        '總價元',
+        '建物移轉總面積平方公尺',
+        '單價元平方公尺',
+        '建物型態',
+        '鄉鎮市區',
+        '交易標的'
     ]
 
     EXTRA_COLUMNS = [
@@ -85,6 +90,7 @@ def clean_data(df):
         "單價元平方公尺": "price_per_sqm", # contains missing value
         "建物型態": "building_type",
         "鄉鎮市區": "district",
+        "交易標的": "transaction_type",
         "車位總價元": "parking_price",
         "車位移轉總面積平方公尺": "parking_area",
         "主建物面積": "main_area"
@@ -93,6 +99,14 @@ def clean_data(df):
     # Strip whitespace
     df['address'] = df['address'].str.strip()
     df['district'] = df['district'].str.strip()
+
+    len_before = len(df)
+
+    # Handle to housing-only dataset
+    df = df[df['transaction_type'].str.contains('房地')]
+
+    len_after = len(df)
+    print(f"Before and after filtering: {len_before} -> {len_after}")
 
     # Handle weird numeric values
     df['price'] = df['price'].astype(str).str.replace(',','')
@@ -165,7 +179,7 @@ def clean_data(df):
     df = df.dropna(subset=['price', 'area'])
 
     print(f"Final rows: {len(df)}")
-    print(f'Missing price_per_sqm: {df['price_per_sqm'].isna().sum()}')
+    print(f"Missing price_per_sqm: {df['price_per_sqm'].isna().sum()}")
 
     return df
 
