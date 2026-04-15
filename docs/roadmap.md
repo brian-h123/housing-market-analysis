@@ -236,82 +236,239 @@ Transform analysis results into clear, structured insights.
 
 ---
 
-## 📊 Day 6 — Analytical Deep Dive
+## ✅ Day 6 — Analytical Deep Dive (Completed)
 
 ### Objective
 
 Deepen analysis and validate pricing logic and data reliability.
 
-### Tasks
+### Completed
 
-- Analyze pricing methods:
+**Pricing Method Analysis**
 
-  - Compare `original`, `net_adjusted`, and `fallback_computed`
-  - Evaluate differences in price per sqm
+- Compared `original`, `net_adjusted`, and `fallback_computed`
+- Measured differences using:
+  - `price_diff`
+  - `net_price_diff`
+- Observed that:
+  - `original` pricing shows small deviations vs computed values
+  - `net_adjusted` significantly reduces discrepancy when parking is involved
 
-- Perform district segmentation:
+**District Segmentation**
 
-  - Rank districts by price per sqm
-  - Compare top vs bottom districts
-  - Identify pricing patterns and gaps
+- Ranked districts by `final_price_per_sqm`
+- Identified:
+  - High-priced districts (premium areas)
+  - Lower-priced districts (more affordable areas)
+- Observed clear pricing gaps between top and bottom tiers
 
-- Conduct data quality checks:
+**Data Quality Validation**
 
-  - Measure usage of each pricing method
-  - Analyze discrepancies (`price_diff`, `net_price_diff`)
-  - Assess reliability of computed values
+- Measured usage of pricing methods:
+  - Majority: `original`
+  - Significant portion: `net_adjusted`
+  - Small portion: `fallback_computed`
+- Validated that:
+  - `net_adjusted` improves pricing consistency
+  - fallback logic is necessary but limited in usage
 
-- Summarize findings:
-  - Highlight key patterns and inconsistencies
-  - Identify strengths and limitations of the dataset
+**Discrepancy Analysis**
 
-# Phase Completion Criteria
+- `price_diff` confirms mismatch in raw dataset
+- `net_price_diff` shows improved alignment after adjustment
+- Confirms correctness of pricing logic design
 
-Phase 1 will be considered complete when:
+### Key Outcome
 
-- Dataset is **clean, consistent, and scoped to valid housing transactions**
-- Pricing logic (`price_per_sqm`) is:
-  - clearly defined
-  - consistently applied
-  - documented with assumptions
-- Core descriptive insights are generated
-- At least 3–5 meaningful visualizations are created
-- Key findings and limitations are documented
+- Pricing methodology is **validated and reliable**
+- Dataset is **internally consistent**
+- Analytical assumptions are now **tested and defensible**
 
 ---
 
+# ✅ Phase 1 Summary — Data Foundation & First Insights
+
+### What Was Achieved
+
+- Built a complete **data pipeline**:
+
+  - ingestion → cleaning → storage (SQLite)
+
+- Transformed raw data into a **clean, structured dataset**:
+
+  - Removed invalid and inconsistent records
+  - Scoped dataset to **housing-only transactions**
+
+- Developed **robust pricing logic**:
+
+  - Introduced `net_price` and `net_area`
+  - Created `final_price_per_sqm`
+  - Implemented `pricing_method` tracking
+
+- Generated **meaningful insights**:
+
+  - District-level pricing differences
+  - Distribution patterns and skewness
+  - Time-based trends
+  - Variance differences across districts
+
+- Validated **data reliability**:
+  - Identified inconsistencies in raw dataset
+  - Demonstrated improvement via `net_adjusted` logic
+  - Quantified discrepancies using `price_diff`
+
+---
+
+### Key Learnings
+
+- Raw real estate data is **context-dependent**, not plug-and-play
+- Parking inclusion is a **major source of pricing distortion**
+- Data cleaning is not just preprocessing — it is **core to analysis validity**
+- Defining dataset scope is **as important as feature engineering**
+
+---
+
+### Limitations
+
+- Dataset only covers **housing transactions**
+- No handling yet for:
+  - land
+  - parking-only transactions
+- No external data enrichment (e.g. location, transport, demographics)
+
+---
+
+### Phase 1 Conclusion
+
+Phase 1 successfully delivers a **clean, reliable, and analyzable dataset**, along with **validated pricing logic and initial insights**.
+
+## → Ready to transition into **productization (Phase 2)**
+
 # Phase 2 — Analytical Product Development
 
-## 🚀 Day 7 — Dashboard Foundation (Streamlit)
+## 🚀 Day 7 — Dashboard MVP (Streamlit)
 
 ### Objective
 
-Transform analysis into an interactive tool for exploration.
+Convert analysis into an interactive exploration tool.
 
 ### Tasks
 
-- Set up Streamlit project structure
-- Load cleaned dataset from SQLite
-- Build basic UI:
+**Setup**
 
-  - Title and project description
-  - Sidebar filters:
-    - district
-    - date range
+- Initialize Streamlit app structure
+- Connect to SQLite database
+- Load cleaned dataset
 
-- Create initial visualizations:
+**Core UI**
 
-  - Price per sqm distribution
-  - District comparison chart
-  - Time trend chart
+- Page title + short project description
+- Sidebar filters:
+  - district (dropdown)
+  - date range (slider)
 
-- Ensure interactivity:
-  - Filters dynamically update charts
+**Core Visuals (MVP)**
+
+- Distribution:
+
+  - price per sqm (histogram)
+
+- Comparison:
+
+  - district-level average price
+
+- Trend:
+  - price per sqm over time
+
+**Interactivity**
+
+- Ensure all charts respond to filters
+- Keep layout clean and readable
 
 ### Expected Outcome
 
-- A working interactive dashboard (MVP)
-- Users can explore housing prices by district and time
+- Functional dashboard MVP
+- Users can explore pricing across:
+  - districts
+  - time
+
+---
+
+## 🚀 Day 8 — Dashboard Enhancement & UX Improvement
+
+### Objective
+
+Improve usability, clarity, and analytical depth of the dashboard.
+
+### Tasks
+
+**UX Improvements**
+
+- Improve layout spacing and structure
+- Add section headers (Distribution / Comparison / Trends)
+- Add chart titles and descriptions
+
+**New Features**
+
+- Add metric cards:
+  - average price per sqm
+  - total transactions
+- Add top/bottom district ranking table
+
+**Data Controls**
+
+- Add pricing method filter:
+  - original / net_adjusted / fallback_computed
+
+**Visualization Improvements**
+
+- Improve readability:
+  - axis formatting
+  - label clarity
+- Reduce clutter and overlapping elements
+
+### Expected Outcome
+
+- Dashboard is **not just functional, but usable**
+- Insights are easier to interpret for non-technical users
+
+---
+
+# Phase 2 Completion Criteria
+
+Phase 2 will be considered complete when:
+
+- A working **interactive dashboard (Streamlit)** is deployed
+- Users can:
+
+  - filter by district and date
+  - explore price distributions
+  - compare districts
+  - view time trends
+
+- Dashboard includes:
+
+  - at least 3–5 core visualizations
+  - clear labels and explanations
+  - responsive interactivity
+
+- Key insights from Phase 1 are:
+
+  - reflected in the dashboard
+  - easily discoverable
+
+- Codebase is:
+  - modular
+  - readable
+  - reproducible
+
+---
+
+### Stretch Goals (Optional)
+
+- Add map-based visualization
+- Add export functionality
+- Add automated data refresh pipeline
 
 # Future Work & Improvements (Post-MVP)
 
