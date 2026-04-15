@@ -189,7 +189,7 @@ Ensure dataset consistency and begin producing meaningful visual insights.
 
 ---
 
-## 📊 Day 5 — Insight Generation & Storytelling (Planned)
+## ✅ Day 5 — Insight Generation & Storytelling (Completed)
 
 ### Objective
 
@@ -197,25 +197,42 @@ Transform analysis results into clear, structured insights.
 
 ### Tasks
 
-- Perform time-based analysis:
+**Time-based Analysis**
 
-  - Monthly average price per sqm
+- Analyzed monthly trends:
+  - Average price per sqm over time
   - Transaction volume over time
+- Identified general market movement patterns (growth / stability / fluctuations)
 
-- Improve visualization quality:
+**Visualization Improvements**
 
-  - Add clear titles and labels
-  - Fix overlapping text and readability issues
-  - Ensure consistent formatting
+- Improved chart readability:
+  - Fixed overlapping text
+  - Adjusted label positioning
+  - Added clear titles and axis labels
+- Ensured consistent formatting across charts
 
-- Identify key insights:
+**Insight Generation**
 
-  - Pricing differences across districts
-  - Trends over time (growth, decline, stability)
+- Identified key district-level pricing differences
+- Observed variation patterns across districts:
+  - High-variance districts (e.g. wider spread in boxplots)
+  - Low-variance districts (more stable pricing)
+- Noted presence of long whiskers in some districts → indicating occasional extreme transactions
 
-- Document findings:
-  - Summarize key observations
-  - Highlight notable patterns and anomalies
+**Documentation**
+
+- Summarized findings into structured observations
+- Highlighted:
+  - Key trends
+  - Notable anomalies
+  - Early interpretations of market behavior
+
+### Key Outcome
+
+- Raw analysis is now translated into **clear, explainable insights**
+- Visualizations are **presentation-ready**
+- Foundation is set for deeper analytical validation (Day 6)
 
 ---
 
@@ -262,6 +279,39 @@ Phase 1 will be considered complete when:
 - Key findings and limitations are documented
 
 ---
+
+# Phase 2 — Analytical Product Development
+
+## 🚀 Day 7 — Dashboard Foundation (Streamlit)
+
+### Objective
+
+Transform analysis into an interactive tool for exploration.
+
+### Tasks
+
+- Set up Streamlit project structure
+- Load cleaned dataset from SQLite
+- Build basic UI:
+
+  - Title and project description
+  - Sidebar filters:
+    - district
+    - date range
+
+- Create initial visualizations:
+
+  - Price per sqm distribution
+  - District comparison chart
+  - Time trend chart
+
+- Ensure interactivity:
+  - Filters dynamically update charts
+
+### Expected Outcome
+
+- A working interactive dashboard (MVP)
+- Users can explore housing prices by district and time
 
 # Future Work & Improvements (Post-MVP)
 
