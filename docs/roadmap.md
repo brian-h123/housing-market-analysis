@@ -195,7 +195,7 @@ Ensure dataset consistency and begin producing meaningful visual insights.
 
 Transform analysis results into clear, structured insights.
 
-### Tasks
+### Completed
 
 **Time-based Analysis**
 
@@ -346,51 +346,96 @@ Phase 1 successfully delivers a **clean, reliable, and analyzable dataset**, alo
 
 # Phase 2 — Analytical Product Development
 
-## 🚀 Day 7 — Dashboard MVP (Streamlit)
+## Goal
+
+Transform the cleaned dataset and analysis into a **user-focused analytical dashboard** that supports real-world decision making.
+
+---
+
+## Key Focus Areas
+
+1. **Interaction Layer**
+
+   - Filters
+   - Visualizations
+   - User exploration
+
+2. **Analytical Depth**
+
+   - Rankings
+   - Distributions
+   - Comparisons
+   - Derived metrics (median, volume)
+
+3. **Productization**
+   - Multi-page structure
+   - UX improvements
+   - Clear user workflows
+
+---
+
+## ✅ Day 7 — Dashboard MVP - Streamlit (Completed)
 
 ### Objective
 
-Convert analysis into an interactive exploration tool.
+Convert the analytical pipeline into an interactive dashboard for exploring Taiwan housing data.
 
-### Tasks
+### Completed
 
-**Setup**
+**App Architecture Improvements**
 
-- Initialize Streamlit app structure
-- Connect to SQLite database
-- Load cleaned dataset
+- Built Streamlit dashboard (`app.py`)
+- Structured code into clear sections:
+  - Data layer
+  - Filter logic
+  - Visualization functions
+  - UI rendering components
+  - Main application flow
+- Improved maintainability and readability of codebase
 
-**Core UI**
+**Core Functionality**
 
-- Page title + short project description
-- Sidebar filters:
-  - district (dropdown)
-  - date range (slider)
+- Connected Streamlit app to SQLite database
+- Implemented cached data loading (`st.cache_data`)
 
-**Core Visuals (MVP)**
+**Filtering System**
 
-- Distribution:
+- Sidebar filters implemented:
+  - District selection
+  - Date range selection
+- Applied stricter date handling:
+  - Prevents invalid selections
+  - Ensures consistent datetime filtering
 
-  - price per sqm (histogram)
+**Visualizations (MVP)**
 
-- Comparison:
+- Price per sqm distribution (histogram)
+- District-level average price comparison (bar chart)
+- Price trend over time (line chart)
 
-  - district-level average price
+**Data Exploration Table**
 
-- Trend:
-  - price per sqm over time
+- Added sample transaction table
+- Displays:
+  - date (formatted as date only)
+  - district
+  - address
+  - price
+  - area
+  - final_price_per_sqm
+- Toggle to show/hide table
 
-**Interactivity**
+### Key Outcome
 
-- Ensure all charts respond to filters
-- Keep layout clean and readable
+- Functional dashboard MVP completed
+- Users can explore:
 
-### Expected Outcome
+  - pricing distribution
+  - district comparisons
+  - time trends
+  - transaction-level data
 
-- Functional dashboard MVP
-- Users can explore pricing across:
-  - districts
-  - time
+- Codebase is modular and ready for scaling
 
 ---
 
@@ -398,116 +443,302 @@ Convert analysis into an interactive exploration tool.
 
 ### Objective
 
-Improve usability, clarity, and analytical depth of the dashboard.
+Improve usability, consistency, and analytical depth of the dashboard.
 
 ### Tasks
 
-**UX Improvements**
+**UX / UI Improvements**
 
-- Improve layout spacing and structure
-- Add section headers (Distribution / Comparison / Trends)
-- Add chart titles and descriptions
+- Improve layout structure and section grouping
+- Ensure consistent chart sizing and spacing
+- Add clearer visual hierarchy (titles, sections, flow)
 
-**New Features**
+**Filter Enhancements**
 
-- Add metric cards:
-  - average price per sqm
-  - total transactions
-- Add top/bottom district ranking table
+- Support multi-district selection
+- Add additional filters:
+  - price range
+  - area range (optional)
+- Ensure all charts use consistent filtered dataset
 
-**Data Controls**
+**Bug Fixes / Consistency**
 
-- Add pricing method filter:
-  - original / net_adjusted / fallback_computed
+- Fix inconsistency where some charts use unfiltered data
+- Standardize filtering across all components
 
-**Visualization Improvements**
+**Analytical Enhancements**
 
-- Improve readability:
-  - axis formatting
-  - label clarity
-- Reduce clutter and overlapping elements
+- Add at least 1–2 deeper insights:
+  - median price per district
+  - district ranking (top/bottom)
+  - boxplot for price distribution by district
+
+**Table Improvements**
+
+- Enable sorting (e.g. by price)
+- Improve readability and usability
+- Optional: limit control or pagination
 
 ### Expected Outcome
 
-- Dashboard is **not just functional, but usable**
-- Insights are easier to interpret for non-technical users
+- Dashboard becomes more intuitive and consistent
+- Improved analytical value beyond basic visualization
+- Better user experience for exploration
 
 ---
+
+## 🚀 Day 9 — Product Direction & Multi-Page Dashboard
+
+### Objective
+
+Transition from a single-page analytical dashboard into a **user-focused analytical product** tailored for property agents.
+
+Define product direction, restructure the app, and introduce key features that support real-world decision making.
+
+---
+
+### Tasks
+
+**Product Definition**
+
+- Define primary target user:
+  - Property agents
+- Identify key user needs:
+  - Market overview (price trends, distributions)
+  - High-activity districts (transaction volume)
+  - Pricing benchmarks (median, ranges)
+  - Comparable transactions (recent deals)
+
+---
+
+**App Restructuring (Multi-Page Architecture)**
+
+- Refactor Streamlit app into multiple pages:
+
+  1. **Market Overview**
+
+     - KPI metrics:
+       - average price per sqm
+       - median price per sqm
+       - total transactions
+     - price trend over time
+     - price distribution
+
+  2. **District / Map Analysis**
+
+     - District-level comparison:
+       - average price per sqm
+       - transaction volume
+     - Ranking:
+       - top districts by price
+       - top districts by volume
+
+  3. **Transaction Explorer**
+     - Enhanced transaction table
+     - Sorting (price, area, date)
+     - Filter-heavy exploration
+
+  _(Optional for later)_ 4. **District Deep Dive**
+
+  - Detailed breakdown for a selected district
+
+---
+
+**Map Visualization (Key Feature)**
+
+- Introduce map-based visualization:
+  - District-level view:
+    - color → price
+    - size → transaction volume
+- Evaluate tools:
+  - `pydeck` (preferred)
+  - or `plotly` maps
+
+---
+
+**Analytical Enhancements**
+
+- Add new metrics:
+  - median price per sqm
+  - transaction volume per district
+- Introduce district ranking:
+  - by price
+  - by volume
+
+---
+
+### Expected Outcome
+
+- Dashboard evolves from MVP → structured analytical product
+- Clear separation of user workflows across pages
+- Introduction of decision-oriented insights (not just visuals)
+- Foundation for further feature expansion (Day 10+)
 
 # Phase 2 Completion Criteria
 
-Phase 2 will be considered complete when:
+Phase 2 is considered complete when the dashboard:
 
-- A working **interactive dashboard (Streamlit)** is deployed
-- Users can:
+### 1. Product Structure
 
-  - filter by district and date
-  - explore price distributions
-  - compare districts
-  - view time trends
-
-- Dashboard includes:
-
-  - at least 3–5 core visualizations
-  - clear labels and explanations
-  - responsive interactivity
-
-- Key insights from Phase 1 are:
-
-  - reflected in the dashboard
-  - easily discoverable
-
-- Codebase is:
-  - modular
-  - readable
-  - reproducible
+- Has a **multi-page layout** with clear separation of:
+  - overview
+  - district analysis
+  - transaction exploration
 
 ---
 
-### Stretch Goals (Optional)
+### 2. User-Focused Design
 
-- Add map-based visualization
-- Add export functionality
-- Add automated data refresh pipeline
+- Clearly targets a defined user group:
+  - property agents
+- Supports key user questions:
+  - Where is activity highest?
+  - How are prices trending?
+  - What are comparable transactions?
+
+---
+
+### 3. Analytical Capabilities
+
+- Includes:
+  - price trends over time
+  - distribution analysis
+  - district-level comparison
+  - transaction volume metrics
+  - median price (not just mean)
+
+---
+
+### 4. Interactivity
+
+- Fully functional filtering:
+
+  - district (multi-select)
+  - date range
+  - (optional) price / area filters
+
+- All components respond consistently to filters
+
+---
+
+### 5. Core Features
+
+- Transaction exploration table
+- District ranking (price & volume)
+- Basic map visualization (district-level)
+
+---
+
+### 6. Code Quality
+
+- Modular and maintainable code structure
+- Clear separation of:
+  - data
+  - logic
+  - UI
+
+---
+
+### Final Outcome
+
+A **functional analytical product MVP** that goes beyond visualization and supports decision-making for property agents.
+
+---
 
 # Future Work & Improvements (Post-MVP)
 
-### Data Modeling
+## Advanced Analytics
 
-- Handle different transaction types separately:
+- Price growth analysis (month-over-month, year-over-year)
+- District segmentation (high-end vs affordable areas)
+- Volatility / stability indicators
+- Outlier detection (overpriced / underpriced transactions)
 
-  - housing
-  - land
-  - parking
+---
 
-- Define **type-specific metrics**:
+## Enhanced Map Features
+
+- Transaction-level map (point-based visualization)
+- Heatmaps for price and volume
+- Geographic clustering
+
+---
+
+## User Experience Improvements
+
+- KPI cards with trend indicators (↑ ↓)
+- Better layout and visual polish
+- Improved loading performance
+
+---
+
+## Additional User Segments
+
+### Property Buyers
+
+- affordability insights
+- recent comparable transactions
+- price trends by area
+
+### Investors
+
+- high-growth districts
+- emerging areas
+- price momentum indicators
+
+### Analysts / Developers
+
+- deeper statistical analysis
+- clustering and segmentation
+- long-term trend analysis
+
+---
+
+## Productization
+
+- Deploy dashboard (Streamlit Cloud or similar)
+- Add documentation and usage guide
+- Improve README for portfolio presentation
+
+---
+
+## Data Expansion
+
+- Incorporate external data:
+  - transport (MRT proximity)
+  - demographics
+  - amenities
+- Extend beyond housing-only dataset
+
+## Data Model Expansion (Future Phase)
+
+Current dataset is scoped to **housing transactions only** for consistency.
+
+Future expansion may include handling multiple transaction types:
+
+- housing
+- land
+- parking
+
+### Challenges
+
+- Each type requires different metrics:
 
   - housing → price per sqm
   - land → price per land area
   - parking → price per unit
 
-- Consider splitting dataset or introducing a normalized schema
+- Current pricing logic is **not directly transferable**
 
----
+### Potential Approaches
 
-### Pipeline Enhancements
+- Split dataset by transaction type
+- Introduce normalized schema
+- Build type-specific analytical views
 
-- Modularize ingestion pipeline further
-- Add data validation checks by transaction type
-- Implement logging and monitoring
+### Implication
 
----
-
-### Analysis & Product
-
-- Interactive dashboard (Streamlit)
-- Geographic visualization (map-based analysis)
-- Automated data ingestion (scheduled updates)
-
----
-
-### Advanced Analytics
-
-- Feature engineering for modeling
-- Predictive modeling (price estimation)
-- External data enrichment (e.g. demographics, transport)
+- Requires redesign of:
+  - data pipeline
+  - pricing logic
+  - dashboard UX
