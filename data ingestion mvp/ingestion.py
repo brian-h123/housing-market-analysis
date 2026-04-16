@@ -188,7 +188,7 @@ def clean_data(df):
 # ---------------------
 import sqlite3
 
-def save_to_sqlite(cleaned_df, db_path = 'taiwan_housing.db'):
+def save_to_sqlite(cleaned_df, db_path = 'data/taiwan_housing.db'):
     with sqlite3.connect(db_path) as conn:
         cleaned_df.to_sql(
             'transactions',
