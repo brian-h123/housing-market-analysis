@@ -10,11 +10,18 @@ db_path = os.path.join(BASE_DIR, "data", "taiwan_housing.db")
 @st.cache_data(ttl=600)
 def load_data():
     with sqlite3.connect(db_path) as conn:
-        return pd.read_sql(
+        df = pd.read_sql(
             'SELECT * FROM transactions', 
             conn,
             parse_dates=['date']
         )
+    
+    # Development Check (remove before production)
+    assert df['final_price_per_sqm'].notna().all()
+    assert df['area'].notna().all()
+
+    return df
+
 
 # Filter Logic
 def apply_filters(df, selected_districts, date_range, price_range, area_range):
@@ -25,9 +32,13 @@ def apply_filters(df, selected_districts, date_range, price_range, area_range):
         (df['final_price_per_sqm'].between(price_range[0], price_range[1])) &
         (df['area'].between(area_range[0], area_range[1]))
     ]
+
+    filtered = filtered.dropna(subset=['final_price_per_sqm', 'area'])
+
     return filtered
 
 # Chart Functions
+import math
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -115,11 +126,13 @@ def render_sidebar(df):
     # Price range filter
     min_price = int(df['final_price_per_sqm'].min())
     max_price = int(df['final_price_per_sqm'].max())
+    rounded_min_price = int(math.floor(min_price / 10000) * 10000)
+    rounded_max_price = int(math.ceil(max_price / 10000) * 10000)
     price_range = st.sidebar.slider(
         "Price per sqm range",
-        min_value=min_price,
-        max_value=max_price,
-        value=(min_price, max_price),
+        min_value=rounded_min_price,
+        max_value=rounded_max_price,
+        value=(rounded_min_price, rounded_max_price),
         step=10000
     )
 
@@ -128,10 +141,10 @@ def render_sidebar(df):
     max_area = int(df['area'].max())
     area_range = st.sidebar.slider(
         "Area (sqm)",
-        min_value=min_area,
-        max_value=max_area,
+        min_value= int(math.floor(min_area / 10) * 10),
+        max_value= int(math.ceil(max_area / 10) * 10),
         value=(min_area, max_area),
-        step=1
+        step=10
     )
 
     return selected_districts, date_range, price_range, area_range
@@ -212,12 +225,29 @@ def main():
     # Sidebar
     selected_districts, date_range, price_range, area_range = render_sidebar(df)
 
+    if len(date_range) != 2:
+        st.warning("Please select a valid date range")
+        return
+    
+    if not selected_districts:
+        st.warning("Please select at least one district")
+        return
+
     # Filtering
     filtered_df = apply_filters(df, selected_districts, date_range, price_range, area_range)
 
     if filtered_df.empty:
         st.warning('No data for selected filters')
         return
+
+    st.caption(f"""
+    Filtered Data:
+    - Districts: {len(selected_districts)}
+    - Date: {date_range[0]} -> {date_range[1]}
+    - Price range{price_range}
+    - Area range {area_range}
+    - Transactions: {len(filtered_df)}
+    """)
     
     # Key Metrics
     render_metrics(filtered_df)
@@ -227,7 +257,7 @@ def main():
     render_trend_section_allinone(filtered_df)
     render_trend_section_bylevel(filtered_df)
     render_distribution_section(filtered_df)
-    render_comparison_section(df)
+    render_comparison_section(filtered_df)
 
     if st.checkbox("Show transaction data"):
         render_table(filtered_df)
