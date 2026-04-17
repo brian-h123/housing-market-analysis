@@ -439,140 +439,225 @@ Convert the analytical pipeline into an interactive dashboard for exploring Taiw
 
 ---
 
-## 🚀 Day 8 — Dashboard Enhancement & UX Improvement
+## ✅ Day 8 — Dashboard Enhancement & UX Improvement (Completed)
 
 ### Objective
 
-Improve usability, consistency, and analytical depth of the dashboard.
+Improve dashboard usability, clarity, and analytical value by enhancing layout, interactivity, and visualization design.
 
 ### Tasks
 
-**UX / UI Improvements**
+### Completed
 
-- Improve layout structure and section grouping
-- Ensure consistent chart sizing and spacing
-- Add clearer visual hierarchy (titles, sections, flow)
+**Page Structure & User Flow**
+
+- Reorganized dashboard into a clear top-down analytical story:
+  - Title → Key Metrics → Filters (sidebar) → Trends → Distribution → Comparison → Table
+- Improved logical flow to guide users from overview → exploration → detail
+
+**Key Metrics**
+
+- Added summary metrics at the top of the dashboard:
+  - Average price per sqm
+  - Median price per sqm
+  - Transaction count
+- Provides immediate high-level context before deeper analysis
 
 **Filter Enhancements**
 
-- Support multi-district selection
-- Add additional filters:
-  - price range
-  - area range (optional)
-- Ensure all charts use consistent filtered dataset
+- Upgraded district filter to **multiselect** for flexible comparison
+- Added:
+  - Price range filter
+  - Area range filter
+- Improved user control over dataset exploration
 
-**Bug Fixes / Consistency**
+**Visualization Improvements**
 
-- Fix inconsistency where some charts use unfiltered data
-- Standardize filtering across all components
+- Enhanced chart readability and interpretability:
+  - Added axis labels and titles
+  - Included captions to explain chart purpose and usage
+- Made charts more self-explanatory for non-technical users
 
-**Analytical Enhancements**
+**Price Trend Enhancements**
 
-- Add at least 1–2 deeper insights:
-  - median price per district
-  - district ranking (top/bottom)
-  - boxplot for price distribution by district
+- Redesigned trend visualization into two approaches:
+  - **Daily trend with rolling averages**
+    - Helps reveal underlying patterns and smooth volatility
+  - **Flexible aggregation view**
+    - User-selectable granularity: Daily / Weekly / Monthly
+- Allows both detailed inspection and high-level trend analysis
 
 **Table Improvements**
 
-- Enable sorting (e.g. by price)
-- Improve readability and usability
-- Optional: limit control or pagination
+- Enhanced transaction table usability:
+  - Sorted by most recent transactions
+  - Added `building_type` field for more context
+  - Formatted date to display only date (no time component)
+- Added **CSV download button** for data export
+- Improves usability for real-world users (e.g. property agents, analysts)
 
-### Expected Outcome
+### Key Outcome
 
-- Dashboard becomes more intuitive and consistent
-- Improved analytical value beyond basic visualization
-- Better user experience for exploration
+- Dashboard is now **user-friendly and insight-driven**
+- Users can:
+  - Quickly understand the market (via metrics)
+  - Explore trends and distributions interactively
+  - Drill down into real transaction data
+- Marks transition from **functional MVP → usable analytical product**
 
 ---
 
-## 🚀 Day 9 — Product Direction & Multi-Page Dashboard
+## 🔄 Day 9 — Filter Consistency & Data Integrity Alignment (Planned)
 
 ### Objective
 
-Transition from a single-page analytical dashboard into a **user-focused analytical product** tailored for property agents.
-
-Define product direction, restructure the app, and introduce key features that support real-world decision making.
+Ensure all dashboard components respond consistently to user filters and establish a clear, unified analytical logic before further architectural changes.
 
 ---
 
-### Tasks
+### Key Focus Areas
 
-**Product Definition**
+#### 1. Filter Consistency Across All Visualizations (HIGH PRIORITY)
 
-- Define primary target user:
-  - Property agents
-- Identify key user needs:
-  - Market overview (price trends, distributions)
-  - High-activity districts (transaction volume)
-  - Pricing benchmarks (median, ranges)
-  - Comparable transactions (recent deals)
+- Ensure **all charts use filtered dataset (`filtered_df`)**
+- Fix inconsistency where some visualizations rely on full dataset (e.g. district comparison)
+- Align dashboard behavior with user expectation:
+  - “All charts reflect current filter selection”
 
 ---
 
-**App Restructuring (Multi-Page Architecture)**
+#### 2. Standardize Core Metric Definition (HIGH PRIORITY)
 
-- Refactor Streamlit app into multiple pages:
-
-  1. **Market Overview**
-
-     - KPI metrics:
-       - average price per sqm
-       - median price per sqm
-       - total transactions
-     - price trend over time
-     - price distribution
-
-  2. **District / Map Analysis**
-
-     - District-level comparison:
-       - average price per sqm
-       - transaction volume
-     - Ranking:
-       - top districts by price
-       - top districts by volume
-
-  3. **Transaction Explorer**
-     - Enhanced transaction table
-     - Sorting (price, area, date)
-     - Filter-heavy exploration
-
-  _(Optional for later)_ 4. **District Deep Dive**
-
-  - Detailed breakdown for a selected district
+- Confirm `final_price_per_sqm` as the **primary analytical metric**
+- Ensure consistent usage across:
+  - charts
+  - filters
+  - key metrics section
+- Avoid mixing different pricing definitions in core analysis
 
 ---
 
-**Map Visualization (Key Feature)**
+#### 3. Improve Filter Logic Consistency (HIGH PRIORITY)
 
-- Introduce map-based visualization:
-  - District-level view:
-    - color → price
-    - size → transaction volume
-- Evaluate tools:
-  - `pydeck` (preferred)
-  - or `plotly` maps
-
----
-
-**Analytical Enhancements**
-
-- Add new metrics:
-  - median price per sqm
-  - transaction volume per district
-- Introduce district ranking:
-  - by price
-  - by volume
+- Review and align behavior of:
+  - price range slider
+  - area range slider
+- Ensure filters are applied in a clear and predictable way
+- Define whether filter ranges represent:
+  - full dataset bounds, or
+  - dynamically filtered bounds (future enhancement)
 
 ---
 
-### Expected Outcome
+#### 4. UX Clarity & Trust Improvements (MEDIUM PRIORITY)
 
-- Dashboard evolves from MVP → structured analytical product
-- Clear separation of user workflows across pages
-- Introduction of decision-oriented insights (not just visuals)
-- Foundation for further feature expansion (Day 10+)
+- Add captions or notes to reinforce:
+  - filtering behavior
+  - metric definitions
+- Ensure dashboard interactions feel intuitive and reliable
+
+---
+
+### Optional Improvements (If Time Permits)
+
+- Improve slider UX:
+  - rounded values (e.g. steps of 10,000)
+  - better readability and formatting
+- Minor UI polish for consistency
+
+---
+
+### Key Outcome
+
+- Dashboard becomes **consistent, predictable, and trustworthy**
+- All components align with user-selected filters
+- Analytical foundation is stabilized for future expansion
+
+---
+
+### Note
+
+Multi-page architecture and layout redesign are intentionally deferred to Day 10 to avoid compounding inconsistencies during structural changes.
+
+---
+
+## 🧱 Day 10 — Multi-Page Architecture & Product Structuring (Planned)
+
+### Objective
+
+Refactor the dashboard into a multi-page structure to improve usability, scalability, and alignment with real-world analytical workflows.
+
+---
+
+### Key Focus Areas
+
+#### 1. Introduce Multi-Page App Structure (HIGH PRIORITY)
+
+- Split dashboard into logical pages using Streamlit multi-page architecture
+- Ensure clean separation of concerns between pages
+- Maintain shared data loading and filter logic
+
+---
+
+#### 2. Define Page-Level Responsibilities (HIGH PRIORITY)
+
+**Overview Page**
+
+- Key metrics
+- Price trends
+- Price distribution
+
+**District Analysis Page**
+
+- District comparison
+- Ranking and aggregation insights
+
+**Data Explorer Page**
+
+- Transaction table
+- Detailed record-level exploration
+
+---
+
+#### 3. Refactor Filter Design (HIGH PRIORITY)
+
+- Adapt filters to be **context-aware per page**
+- Ensure filters shown are relevant to page purpose
+- Avoid redundant or misleading controls (e.g. district filter in comparison context)
+
+---
+
+#### 4. Improve Navigation & User Flow (MEDIUM PRIORITY)
+
+- Add clear page navigation (sidebar or top-level selection)
+- Ensure smooth transition between:
+  - overview → comparison → detailed exploration
+- Maintain consistent user experience across pages
+
+---
+
+### Optional Improvements (If Time Permits)
+
+- Introduce shared filter components across pages
+- Improve layout and spacing for readability
+- Explore better organization of UI sections
+
+---
+
+### Key Outcome
+
+- Dashboard evolves into a **structured analytical product**
+- Users can navigate between:
+  - high-level overview
+  - comparative insights
+  - detailed data exploration
+- Codebase becomes more modular and scalable for future features
+
+---
+
+### Note
+
+Further UX enhancements (advanced filter interactions, layout redesign, styling improvements) will be explored in subsequent iterations after structural foundation is complete.
 
 # Phase 2 Completion Criteria
 
