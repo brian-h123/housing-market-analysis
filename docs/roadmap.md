@@ -7,126 +7,149 @@ new phases and tasks will be added as the project progresses.
 
 ---
 
-# Current Phase: Phase 1 — Data Foundation & First Insights
+## Target Users (Current Focus)
 
-## Goal
+This project is currently designed for:
 
-Transform raw housing transaction data into a clean, analysable dataset and produce initial insights and visualizations.
+- Property analysts
+
+Primary use cases:
+
+- Analyze pricing trends across districts
+- Compare market segments
+- Identify anomalies and outliers in transactions
+- Validate pricing consistency and data reliability
+
+**Note:**
+
+- Future iterations may expand to other users (e.g. agents, general buyers)
+
+## Project Goal
+
+Build an analyst-focused dashboard for exploring and validating Taiwan housing transaction data.
+
+# Phase 1 — Data Foundation & First Insights
+
+## Phase 1 Overview
+
+### Goal
+
+Transform raw housing data into a clean, reliable dataset,
+define robust pricing metrics, and generate validated insights.
 
 ---
 
-# Phase 1 Progress
+## Execution
 
-## ✅ Day 1 — Data Cleaning & Validation (Completed)
+### ✅ Day 1 — Data Cleaning & Validation (Completed)
 
-### Objective
+#### Objective
 
 Improve the quality and consistency of the dataset.
 
-### Completed
+#### Completed
 
-- Built data ingestion pipeline (`ingestion.py`)
+**Built data ingestion pipeline (`ingestion.py`)**
 
-  - Downloaded and extracted ZIP data
-  - Loaded CSV into pandas
-  - Stored cleaned data into SQLite
+- Downloaded and extracted ZIP data
+- Loaded CSV into pandas
+- Stored cleaned data into SQLite
 
-- Cleaned dataset:
+**Cleaned dataset**
 
-  - Renamed columns to English
-  - Converted `date` to datetime format
-  - Cleaned numeric fields (`price`, `area`, `price_per_sqm`)
-  - Standardized string fields (`address`, `district`)
+- Renamed columns to English
+- Converted `date` to datetime format
+- Cleaned numeric fields (`price`, `area`, `price_per_sqm`)
+- Standardized string fields (`address`, `district`)
 
-- Data validation:
+**Data validation**
 
-  - Removed invalid values (price <= 0, area <= 0)
-  - Applied basic outlier filtering
-  - Verified dataset using summary statistics
+- Removed invalid values (price <= 0, area <= 0)
+- Applied basic outlier filtering
+- Verified dataset using summary statistics
 
-- Feature creation:
-  - `computed_price_per_sqm`
-  - `price_diff`
+**Feature creation**
 
----
+- `computed_price_per_sqm`
+- `price_diff`
 
-## ✅ Day 2 — Exploratory Data Analysis (Completed)
+### ✅ Day 2 — Exploratory Data Analysis (Completed)
 
-### Objective
+#### Objective
 
 Understand pricing patterns and identify data issues.
 
-### Completed
+#### Completed
 
-- Analyzed distributions of:
+**Analyzed distributions of**
 
-  - price
-  - area
-  - price_per_sqm
+- price
+- area
+- price_per_sqm
 
-- Applied log transformation to:
+**Applied log transformation to**
 
-  - price
-  - area
+- price
+- area
 
-- Created visualizations:
+**Created visualizations**
 
-  - histograms (raw and log)
-  - scatter plots (price vs area)
+- histograms (raw and log)
+- scatter plots (price vs area)
 
-- Aggregated district-level metrics:
+**Aggregated district-level metrics**
 
-  - average price
-  - median price
-  - transaction volume
+- average price
+- median price
+- transaction volume
 
-- Investigated discrepancies:
-  - Identified mismatch between `price_per_sqm` and computed values
-  - Found that discrepancies are largely explained by:
-    - parking price
-    - parking area
+**Investigated discrepancies**
 
-### Key Outcome
+- Identified mismatch between `price_per_sqm` and computed values
+- Found that discrepancies are largely explained by:
+  - parking price
+  - parking area
 
-- Identified missing components in dataset that affect pricing accuracy  
-  → Led to pipeline improvement in Day 3
+#### Key Outcome
 
----
+- Identified missing components in dataset that affect pricing accuracy
+  - Led to pipeline improvement in Day 3
 
-## ✅ Day 3 — Data Refinement & Feature Engineering (Completed)
+### ✅ Day 3 — Data Refinement & Feature Engineering (Completed)
 
-### Objective
+#### Objective
 
 Improve accuracy and reliability of pricing metrics by refining calculation logic and handling missing/inconsistent data.
 
-### Completed
+#### Completed
 
-- Enhanced ingestion pipeline with additional fields:
+**Enhanced ingestion pipeline with additional fields**
 
-  - `parking_price`
-  - `parking_area`
-  - `main_area`
+- `parking_price`
+- `parking_area`
+- `main_area`
 
-- Implemented **conditional pricing logic**:
+**Implemented conditional pricing logic**
 
-  - If parking data is available → exclude parking from both price and area
-  - Otherwise → fallback to total price and total area
+- If parking data is available → exclude parking from both price and area
+- Otherwise → fallback to total price and total area
 
-- Added **fallback logic for missing `price_per_sqm`**:
+**Added fallback logic for missing `price_per_sqm`**
 
-  - Use computed `price / area` when original value is missing
+- Use computed `price / area` when original value is missing
 
-- Introduced new features:
+**Introduced new features**
 
-  - `net_price`, `net_area`
-  - `net_price_per_sqm`
-  - `final_price_per_sqm`
-  - `pricing_method` (original / net_adjusted / fallback_computed)
+- `net_price`, `net_area`
+- `net_price_per_sqm`
+- `final_price_per_sqm`
+- `pricing_method` (original / net_adjusted / fallback_computed)
 
-- Re-evaluated discrepancies between:
-  - original vs computed vs adjusted pricing
+**Re-evaluated discrepancies between**
 
-### Key Findings
+- original vs computed vs adjusted pricing
+
+#### Key Outcome
 
 - `price_per_sqm` is **context-dependent**, not a simple ratio:
 
@@ -141,29 +164,28 @@ Improve accuracy and reliability of pricing metrics by refining calculation logi
   - `交易標的` (transaction type)
 
 - Observed that:
+
   - Land transactions → building area = 0 → invalid for current calculations
   - Parking-only transactions → `price_per_sqm` is naturally missing
 
-### Implication
+**Implications**
 
 - Current dataset mixes **non-comparable transaction types**
 - Some rows violate assumptions behind `price_per_sqm`
 - A **data scope definition problem** exists (not just a calculation issue)
 
-→ Decision:
+**Decision**
 
 - For MVP, prioritize **data consistency via filtering**
 - Defer full multi-type handling to later phases
 
----
+### ✅ Day 4 — Data Scope Refinement & Visualization (Completed)
 
-## ✅ Day 4 — Data Scope Refinement & Visualization (Completed)
-
-### Objective
+#### Objective
 
 Ensure dataset consistency and begin producing meaningful visual insights.
 
-### Completed
+#### Completed
 
 **Data Scope Refinement**
 
@@ -181,21 +203,19 @@ Ensure dataset consistency and begin producing meaningful visual insights.
   - price vs area
   - district-level price metrics
 
-### Key Outcome
+#### Key Outcome
 
 - Dataset is now **consistent and comparable**
 - `price_per_sqm` is now meaningful across observations
 - Established a reliable foundation for insight generation
 
----
+### ✅ Day 5 — Insight Generation & Storytelling (Completed)
 
-## ✅ Day 5 — Insight Generation & Storytelling (Completed)
-
-### Objective
+#### Objective
 
 Transform analysis results into clear, structured insights.
 
-### Completed
+#### Completed
 
 **Time-based Analysis**
 
@@ -228,21 +248,19 @@ Transform analysis results into clear, structured insights.
   - Notable anomalies
   - Early interpretations of market behavior
 
-### Key Outcome
+#### Key Outcome
 
 - Raw analysis is now translated into **clear, explainable insights**
 - Visualizations are **presentation-ready**
 - Foundation is set for deeper analytical validation (Day 6)
 
----
+### ✅ Day 6 — Analytical Deep Dive (Completed)
 
-## ✅ Day 6 — Analytical Deep Dive (Completed)
-
-### Objective
+#### Objective
 
 Deepen analysis and validate pricing logic and data reliability.
 
-### Completed
+#### Completed
 
 **Pricing Method Analysis**
 
@@ -278,7 +296,7 @@ Deepen analysis and validate pricing logic and data reliability.
 - `net_price_diff` shows improved alignment after adjustment
 - Confirms correctness of pricing logic design
 
-### Key Outcome
+#### Key Outcome
 
 - Pricing methodology is **validated and reliable**
 - Dataset is **internally consistent**
@@ -286,7 +304,7 @@ Deepen analysis and validate pricing logic and data reliability.
 
 ---
 
-# ✅ Phase 1 Summary — Data Foundation & First Insights
+## ✅ Phase 1 Summary — Data Foundation & First Insights
 
 ### What Was Achieved
 
@@ -317,16 +335,12 @@ Deepen analysis and validate pricing logic and data reliability.
   - Demonstrated improvement via `net_adjusted` logic
   - Quantified discrepancies using `price_diff`
 
----
-
 ### Key Learnings
 
 - Raw real estate data is **context-dependent**, not plug-and-play
 - Parking inclusion is a **major source of pricing distortion**
 - Data cleaning is not just preprocessing — it is **core to analysis validity**
 - Defining dataset scope is **as important as feature engineering**
-
----
 
 ### Limitations
 
@@ -336,23 +350,29 @@ Deepen analysis and validate pricing logic and data reliability.
   - parking-only transactions
 - No external data enrichment (e.g. location, transport, demographics)
 
----
-
 ### Phase 1 Conclusion
 
 Phase 1 successfully delivers a **clean, reliable, and analyzable dataset**, along with **validated pricing logic and initial insights**.
 
-## → Ready to transition into **productization (Phase 2)**
-
-# Phase 2 — Analytical Product Development
-
-## Goal
-
-Transform the cleaned dataset and analysis into a **user-focused analytical dashboard** that supports real-world decision making.
+## Ready to transition into Phase 2 — Productization
 
 ---
 
-## Key Focus Areas
+# Phase 2 — From Analysis to Product
+
+## Phase 2 Overview
+
+With a validated dataset and insights, the next phase focuses on:
+
+- Building an interactive dashboard
+- Enabling user-driven exploration
+- Translating analysis into a usable tool
+
+### Goal
+
+Transform the cleaned dataset and analysis into a **user-focused analytical dashboard** that supports real-world decision making.
+
+### Key Focus Areas
 
 1. **Interaction Layer**
 
@@ -374,13 +394,15 @@ Transform the cleaned dataset and analysis into a **user-focused analytical dash
 
 ---
 
-## ✅ Day 7 — Dashboard MVP - Streamlit (Completed)
+## Execution
 
-### Objective
+### ✅ Day 7 — Dashboard MVP - Streamlit (Completed)
+
+#### Objective
 
 Convert the analytical pipeline into an interactive dashboard for exploring Taiwan housing data.
 
-### Completed
+#### Completed
 
 **App Architecture Improvements**
 
@@ -425,7 +447,7 @@ Convert the analytical pipeline into an interactive dashboard for exploring Taiw
   - final_price_per_sqm
 - Toggle to show/hide table
 
-### Key Outcome
+#### Key Outcome
 
 - Functional dashboard MVP completed
 - Users can explore:
@@ -437,17 +459,13 @@ Convert the analytical pipeline into an interactive dashboard for exploring Taiw
 
 - Codebase is modular and ready for scaling
 
----
+### ✅ Day 8 — Dashboard Enhancement & UX Improvement (Completed)
 
-## ✅ Day 8 — Dashboard Enhancement & UX Improvement (Completed)
-
-### Objective
+#### Objective
 
 Improve dashboard usability, clarity, and analytical value by enhancing layout, interactivity, and visualization design.
 
-### Tasks
-
-### Completed
+#### Completed
 
 **Page Structure & User Flow**
 
@@ -496,7 +514,7 @@ Improve dashboard usability, clarity, and analytical value by enhancing layout, 
 - Added **CSV download button** for data export
 - Improves usability for real-world users (e.g. property agents, analysts)
 
-### Key Outcome
+#### Key Outcome
 
 - Dashboard is now **user-friendly and insight-driven**
 - Users can:
@@ -505,161 +523,162 @@ Improve dashboard usability, clarity, and analytical value by enhancing layout, 
   - Drill down into real transaction data
 - Marks transition from **functional MVP → usable analytical product**
 
----
+### ✅ Day 9 — Filter Consistency & Data Integrity Alignment (Completed)
 
-## 🔄 Day 9 — Filter Consistency & Data Integrity Alignment (Planned)
+#### Objective
 
-### Objective
+Ensure all dashboard components use consistent filtering logic and improve robustness of user interactions.
 
-Ensure all dashboard components respond consistently to user filters and establish a clear, unified analytical logic before further architectural changes.
+#### Completed
 
----
+**Filter Consistency**
 
-### Key Focus Areas
-
-#### 1. Filter Consistency Across All Visualizations (HIGH PRIORITY)
-
-- Ensure **all charts use filtered dataset (`filtered_df`)**
-- Fix inconsistency where some visualizations rely on full dataset (e.g. district comparison)
-- Align dashboard behavior with user expectation:
-  - “All charts reflect current filter selection”
-
----
-
-#### 2. Standardize Core Metric Definition (HIGH PRIORITY)
-
-- Confirm `final_price_per_sqm` as the **primary analytical metric**
-- Ensure consistent usage across:
+- Standardized all charts and components to use `filtered_df`
+- Ensured a single source of truth for filtered data across:
+  - metrics
   - charts
-  - filters
-  - key metrics section
-- Avoid mixing different pricing definitions in core analysis
+  - tables
+
+**Data Integrity Validation**
+
+- Added assertions to validate critical fields:
+  - `final_price_per_sqm`
+  - `area`
+- Applied `dropna` after filtering to prevent invalid data from propagating into visualizations
+
+**Edge Case Handling**
+
+- Improved filter robustness:
+  - Prevented invalid date selection (must select full range)
+  - Prevented empty district selection
+- Added user feedback via warnings when filters are invalid or result in no data
+
+**UX Improvements**
+
+- Enhanced slider usability:
+  - Rounded price bounds to cleaner values (e.g. steps of 10,000)
+  - Improved readability and user control over filter ranges
+
+**User Feedback**
+
+- Added dynamic summary caption showing:
+  - selected districts
+  - date range
+  - price and area filters
+  - total transactions
+- Provides immediate transparency into current filter state
+
+#### Key Outcome
+
+- Dashboard is now **logically consistent and reliable**
+- Filters behave predictably across all components
+- Users receive **clear feedback and smoother interaction experience**
+
+### ⏳ Day 10 — App Architecture Refactor (Multi-Page Foundation)
+
+#### Objective
+
+Refactor the dashboard into a multi-page structure to improve scalability, maintainability, and prepare for future feature expansion.
+
+#### Tasks
+
+**Multi-Page Structure**
+
+- Split the dashboard into logical pages:
+  - Overview (key metrics + summary)
+  - Trends (time-based analysis)
+  - District Analysis (comparisons)
+  - Transactions (table view)
+- Use Streamlit’s multi-page architecture for navigation
+
+**Code Organization**
+
+- Separate concerns into clearer modules:
+  - data loading
+  - filter logic
+  - visualization functions
+  - UI rendering
+- Ensure reusability of existing chart functions across pages
+
+**Shared Filter System**
+
+- Maintain a single, consistent sidebar filter across all pages
+- Ensure all pages rely on the same `filtered_df` logic
+- Preserve data integrity checks and edge case handling introduced in Day 9
+
+**Stability First Approach**
+
+- Focus on restructuring without introducing new features
+- Ensure all existing functionality works identically after refactor
+- Validate:
+  - charts render correctly
+  - filters behave consistently
+  - no regression in data handling
+
+#### Deferred (Next Iteration)
+
+- Dynamic/reactive filters (e.g. district → price/area updates)
+- Page-level filter overrides (e.g. district comparison mode)
+- Filter layout redesign and UX improvements
+- Additional analytical features or new visualizations
+
+#### Expected Outcome
+
+- Cleaner and more scalable app structure
+- Easier to extend with new features and pages
+- Strong foundation for upcoming UX and analytical enhancements
+
+### ⏳ Day 11 — UX Intelligence & Smart Filtering
+
+#### Objective
+
+Enhance user experience by introducing smarter, context-aware filtering and improving analytical usability across pages.
+
+#### Planned
+
+**Page-Level Filter Overrides**
+
+- Implement controlled overrides for specific pages:
+  - District Analysis:
+    - Add “Comparison Mode” toggle:
+      - Use selected districts (default)
+      - Compare all districts (ignore district filter)
+- Ensure overrides remain transparent and predictable to users
+
+**Dynamic / Reactive Filters**
+
+- Improve filter responsiveness:
+  - Adjust price/area ranges dynamically based on selected districts and date range
+- Prevent misleading or empty selections caused by incompatible filter combinations
+
+**Filter Feedback & Clarity**
+
+- Improve visibility of filter effects:
+  - Enhance summary caption formatting
+  - Clearly indicate when filters are overridden (e.g. comparison mode)
+- Improve empty-state messaging
+
+**Usability Enhancements**
+
+- Refine default values for filters (better starting experience)
+- Improve logical grouping of filter controls
+- Ensure smooth interaction across pages
+
+#### Optional Enhancements (If Time Permits)
+
+- Top N district selector for comparison charts
+- Sorting options (avg / median / transaction volume)
+- Persist user selections across sessions (advanced)
+
+#### Expected Outcome
+
+- More intuitive and flexible filtering experience
+- Better support for both exploration and comparison workflows
+- Reduced user confusion from conflicting or overly restrictive filters
 
 ---
 
-#### 3. Improve Filter Logic Consistency (HIGH PRIORITY)
-
-- Review and align behavior of:
-  - price range slider
-  - area range slider
-- Ensure filters are applied in a clear and predictable way
-- Define whether filter ranges represent:
-  - full dataset bounds, or
-  - dynamically filtered bounds (future enhancement)
-
----
-
-#### 4. UX Clarity & Trust Improvements (MEDIUM PRIORITY)
-
-- Add captions or notes to reinforce:
-  - filtering behavior
-  - metric definitions
-- Ensure dashboard interactions feel intuitive and reliable
-
----
-
-### Optional Improvements (If Time Permits)
-
-- Improve slider UX:
-  - rounded values (e.g. steps of 10,000)
-  - better readability and formatting
-- Minor UI polish for consistency
-
----
-
-### Key Outcome
-
-- Dashboard becomes **consistent, predictable, and trustworthy**
-- All components align with user-selected filters
-- Analytical foundation is stabilized for future expansion
-
----
-
-### Note
-
-Multi-page architecture and layout redesign are intentionally deferred to Day 10 to avoid compounding inconsistencies during structural changes.
-
----
-
-## 🧱 Day 10 — Multi-Page Architecture & Product Structuring (Planned)
-
-### Objective
-
-Refactor the dashboard into a multi-page structure to improve usability, scalability, and alignment with real-world analytical workflows.
-
----
-
-### Key Focus Areas
-
-#### 1. Introduce Multi-Page App Structure (HIGH PRIORITY)
-
-- Split dashboard into logical pages using Streamlit multi-page architecture
-- Ensure clean separation of concerns between pages
-- Maintain shared data loading and filter logic
-
----
-
-#### 2. Define Page-Level Responsibilities (HIGH PRIORITY)
-
-**Overview Page**
-
-- Key metrics
-- Price trends
-- Price distribution
-
-**District Analysis Page**
-
-- District comparison
-- Ranking and aggregation insights
-
-**Data Explorer Page**
-
-- Transaction table
-- Detailed record-level exploration
-
----
-
-#### 3. Refactor Filter Design (HIGH PRIORITY)
-
-- Adapt filters to be **context-aware per page**
-- Ensure filters shown are relevant to page purpose
-- Avoid redundant or misleading controls (e.g. district filter in comparison context)
-
----
-
-#### 4. Improve Navigation & User Flow (MEDIUM PRIORITY)
-
-- Add clear page navigation (sidebar or top-level selection)
-- Ensure smooth transition between:
-  - overview → comparison → detailed exploration
-- Maintain consistent user experience across pages
-
----
-
-### Optional Improvements (If Time Permits)
-
-- Introduce shared filter components across pages
-- Improve layout and spacing for readability
-- Explore better organization of UI sections
-
----
-
-### Key Outcome
-
-- Dashboard evolves into a **structured analytical product**
-- Users can navigate between:
-  - high-level overview
-  - comparative insights
-  - detailed data exploration
-- Codebase becomes more modular and scalable for future features
-
----
-
-### Note
-
-Further UX enhancements (advanced filter interactions, layout redesign, styling improvements) will be explored in subsequent iterations after structural foundation is complete.
-
-# Phase 2 Completion Criteria
+## Phase 2 Completion Criteria
 
 Phase 2 is considered complete when the dashboard:
 
@@ -670,18 +689,15 @@ Phase 2 is considered complete when the dashboard:
   - district analysis
   - transaction exploration
 
----
-
 ### 2. User-Focused Design
 
 - Clearly targets a defined user group:
-  - property agents
+  - property analysts (primary)
+  - property agents (secondary, future expansion)
 - Supports key user questions:
   - Where is activity highest?
   - How are prices trending?
   - What are comparable transactions?
-
----
 
 ### 3. Analytical Capabilities
 
@@ -691,8 +707,6 @@ Phase 2 is considered complete when the dashboard:
   - district-level comparison
   - transaction volume metrics
   - median price (not just mean)
-
----
 
 ### 4. Interactivity
 
@@ -704,15 +718,11 @@ Phase 2 is considered complete when the dashboard:
 
 - All components respond consistently to filters
 
----
-
 ### 5. Core Features
 
 - Transaction exploration table
 - District ranking (price & volume)
 - Basic map visualization (district-level)
-
----
 
 ### 6. Code Quality
 
@@ -721,8 +731,6 @@ Phase 2 is considered complete when the dashboard:
   - data
   - logic
   - UI
-
----
 
 ### Final Outcome
 
@@ -739,23 +747,17 @@ A **functional analytical product MVP** that goes beyond visualization and suppo
 - Volatility / stability indicators
 - Outlier detection (overpriced / underpriced transactions)
 
----
-
 ## Enhanced Map Features
 
 - Transaction-level map (point-based visualization)
 - Heatmaps for price and volume
 - Geographic clustering
 
----
-
 ## User Experience Improvements
 
 - KPI cards with trend indicators (↑ ↓)
 - Better layout and visual polish
 - Improved loading performance
-
----
 
 ## Additional User Segments
 
@@ -777,15 +779,11 @@ A **functional analytical product MVP** that goes beyond visualization and suppo
 - clustering and segmentation
 - long-term trend analysis
 
----
-
 ## Productization
 
 - Deploy dashboard (Streamlit Cloud or similar)
 - Add documentation and usage guide
 - Improve README for portfolio presentation
-
----
 
 ## Data Expansion
 
