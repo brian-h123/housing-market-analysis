@@ -2,20 +2,6 @@
 import streamlit as st
 import pandas as pd
 
-# Filter Logic
-def apply_filters(df, selected_districts, date_range, price_range, area_range):
-    filtered = df[
-        (df['district'].isin(selected_districts)) &
-        (df['date'] >= pd.to_datetime(date_range[0])) &
-        (df['date'] <= pd.to_datetime(date_range[1])) &
-        (df['final_price_per_sqm'].between(price_range[0], price_range[1])) &
-        (df['area'].between(area_range[0], area_range[1]))
-    ]
-
-    filtered = filtered.dropna(subset=['final_price_per_sqm', 'area'])
-
-    return filtered
-
 # Chart Functions
 import math
 import seaborn as sns
@@ -195,6 +181,7 @@ def render_table(df):
     st.dataframe(display_df.head(15))
 
 from utils.db import load_data
+from utils.filters import apply_filters
 
 # Main App Flow
 def main():
