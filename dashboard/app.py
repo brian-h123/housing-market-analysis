@@ -1,27 +1,6 @@
 # Data Layer
 import streamlit as st
 import pandas as pd
-import sqlite3
-import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-db_path = os.path.join(BASE_DIR, "data", "taiwan_housing.db")
-
-@st.cache_data(ttl=600)
-def load_data():
-    with sqlite3.connect(db_path) as conn:
-        df = pd.read_sql(
-            'SELECT * FROM transactions', 
-            conn,
-            parse_dates=['date']
-        )
-    
-    # Development Check (remove before production)
-    assert df['final_price_per_sqm'].notna().all()
-    assert df['area'].notna().all()
-
-    return df
-
 
 # Filter Logic
 def apply_filters(df, selected_districts, date_range, price_range, area_range):
@@ -215,12 +194,18 @@ def render_table(df):
 
     st.dataframe(display_df.head(15))
 
+from utils.db import load_data
+
 # Main App Flow
 def main():
     st.title('Taiwan Housing Dashboard')
     st.info("Use the filters on the left to explore districts and time periods.")
 
-    df = load_data()
+    try:
+        df = load_data()
+    except FileNotFoundError as e:
+        st.error(str(e))
+        st.stop()
 
     # Sidebar
     selected_districts, date_range, price_range, area_range = render_sidebar(df)
