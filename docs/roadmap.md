@@ -574,107 +574,158 @@ Ensure all dashboard components use consistent filtering logic and improve robus
 - Filters behave predictably across all components
 - Users receive **clear feedback and smoother interaction experience**
 
-### ⏳ Day 10 — App Architecture Refactor (Multi-Page Foundation)
+### ✅ Day 10 — App Architecture Refactor (Completed)
 
 #### Objective
 
 Refactor the dashboard into a multi-page structure to improve scalability, maintainability, and prepare for future feature expansion.
 
-#### Tasks
+#### Completed
 
 **Multi-Page Structure**
 
-- Split the dashboard into logical pages:
-  - Overview (key metrics + summary)
-  - Trends (time-based analysis)
-  - District Analysis (comparisons)
-  - Transactions (table view)
-- Use Streamlit’s multi-page architecture for navigation
+- Converted app into a multi-page architecture using a sidebar navigation selectbox
+- Created separate pages:
+  - Overview
+  - Trends
+  - District Analysis
+  - Data Explorer (transactions table)
+- Ensured each page renders independently via modular `views/` structure
 
 **Code Organization**
 
-- Separate concerns into clearer modules:
-  - data loading
-  - filter logic
-  - visualization functions
-  - UI rendering
-- Ensure reusability of existing chart functions across pages
+- Refactored `app.py` into a router/controller:
+  - Handles navigation logic only
+  - Delegates rendering to page-specific modules
+- Split codebase into clearer components:
+  - `views/` → page-level UI
+  - `components/` → reusable UI elements (charts, metrics, sections)
+  - `utils/` → data loading and shared logic
+- Improved separation of concerns and readability
 
 **Shared Filter System**
 
-- Maintain a single, consistent sidebar filter across all pages
-- Ensure all pages rely on the same `filtered_df` logic
-- Preserve data integrity checks and edge case handling introduced in Day 9
+- Maintained consistent filter logic across pages
+- Ensured all pages rely on the same filtered dataset approach
+- Preserved:
+  - data integrity checks
+  - edge case handling (empty filters, invalid ranges)
 
-**Stability First Approach**
+**Stability Validation**
 
-- Focus on restructuring without introducing new features
-- Ensure all existing functionality works identically after refactor
-- Validate:
-  - charts render correctly
+- Verified that all existing functionality works after refactor:
+  - charts render correctly across pages
   - filters behave consistently
   - no regression in data handling
 
-#### Deferred (Next Iteration)
+#### Key Outcome
 
-- Dynamic/reactive filters (e.g. district → price/area updates)
-- Page-level filter overrides (e.g. district comparison mode)
-- Filter layout redesign and UX improvements
-- Additional analytical features or new visualizations
+- App is now **modular and scalable**
+- New features can be added per page without affecting others
+- Codebase is significantly easier to maintain and extend
 
-#### Expected Outcome
-
-- Cleaner and more scalable app structure
-- Easier to extend with new features and pages
-- Strong foundation for upcoming UX and analytical enhancements
-
-### ⏳ Day 11 — UX Intelligence & Smart Filtering
+### ⏳ Day 11 — Smart Filtering (Control & Clarity)
 
 #### Objective
 
-Enhance user experience by introducing smarter, context-aware filtering and improving analytical usability across pages.
+Introduce controlled flexibility in filtering while ensuring behavior remains predictable, transparent, and easy to understand.
 
-#### Planned
+#### Tasks
 
 **Page-Level Filter Overrides**
 
-- Implement controlled overrides for specific pages:
-  - District Analysis:
-    - Add “Comparison Mode” toggle:
-      - Use selected districts (default)
-      - Compare all districts (ignore district filter)
-- Ensure overrides remain transparent and predictable to users
+- Implement “Comparison Mode” in District Analysis:
+  - Default:
+    - Use selected districts from sidebar
+  - Comparison Mode:
+    - Ignore district filter and show all districts
+- Clearly indicate when override is active:
+  - Add UI message (e.g. “Comparison Mode: showing all districts”)
 
-**Dynamic / Reactive Filters**
+**Filter Transparency & Feedback**
 
-- Improve filter responsiveness:
-  - Adjust price/area ranges dynamically based on selected districts and date range
-- Prevent misleading or empty selections caused by incompatible filter combinations
+- Improve filter summary display:
+  - Clearly show:
+    - selected districts
+    - date range
+    - price range
+    - area range
+- Ensure summary is consistent across all pages
+- Indicate when filters are overridden (e.g. comparison mode active)
 
-**Filter Feedback & Clarity**
+**Empty State Handling**
 
-- Improve visibility of filter effects:
-  - Enhance summary caption formatting
-  - Clearly indicate when filters are overridden (e.g. comparison mode)
-- Improve empty-state messaging
+- Handle cases where filters return no data:
+  - Display clear message:
+    - “No transactions found for selected filters”
+- Prevent charts and tables from rendering invalid/empty visuals
 
-**Usability Enhancements**
+**Validation & Stability**
 
-- Refine default values for filters (better starting experience)
-- Improve logical grouping of filter controls
-- Ensure smooth interaction across pages
-
-#### Optional Enhancements (If Time Permits)
-
-- Top N district selector for comparison charts
-- Sorting options (avg / median / transaction volume)
-- Persist user selections across sessions (advanced)
+- Ensure all pages:
+  - behave consistently with filters
+  - do not break under edge cases
+- Test:
+  - empty district selection
+  - extreme price/area ranges
+  - narrow date ranges
 
 #### Expected Outcome
 
-- More intuitive and flexible filtering experience
-- Better support for both exploration and comparison workflows
-- Reduced user confusion from conflicting or overly restrictive filters
+- Users clearly understand what data is being shown
+- Comparison workflows become intentional and usable
+- Filtering logic is more flexible without becoming confusing
+
+---
+
+### ⏳ Day 12 — Smart Filtering (Responsiveness & UX)
+
+#### Objective
+
+Enhance filtering experience by making it responsive to user selections and improving overall usability and interaction design.
+
+#### Tasks
+
+**Dynamic / Reactive Filters**
+
+- Update price and area sliders dynamically based on:
+  - selected districts
+  - selected date range
+- Ensure:
+  - no impossible selections
+  - no misleading ranges
+- Maintain stability:
+  - avoid excessive re-renders
+  - ensure consistent behavior across pages
+
+**Filter Layout & UX Improvements**
+
+- Improve sidebar organization:
+  - Group related filters logically
+  - Add clear section labels (e.g. “Location”, “Time”, “Property Filters”)
+- Improve spacing and readability
+- Make filter usage more intuitive for first-time users
+
+**Default Value Optimization**
+
+- Set smarter default filter values:
+  - Recent date range (e.g. last 12 months)
+  - Reasonable price and area bounds
+- Improve initial dashboard state for better first impression
+
+**Optional Enhancements (If Time Permits)**
+
+- Top N district selector for comparison charts
+- Sorting options:
+  - average price
+  - median price
+  - transaction volume
+
+#### Expected Outcome
+
+- Filters feel responsive and adaptive to user input
+- Users avoid invalid or confusing selections
+- Dashboard delivers a smoother, more polished product experience
 
 ---
 
