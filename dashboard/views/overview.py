@@ -1,9 +1,9 @@
 import streamlit as st
 
 from utils.db import load_data
-from utils.filters import apply_filters
+from utils.filters import apply_filters, validate_filters
 
-from components.filters import render_filter_sidebar
+from components.filters import render_filter_sidebar, render_filter_summary
 from components.metrics import render_metrics
 from components.charts import (
     plot_price_trend_bylevel,
@@ -22,25 +22,14 @@ def app():
         st.stop()
 
     # Sidebar filters
-    selected_districts, date_range, price_range, area_range = render_filter_sidebar(df)
-
-    # Validate inputs
-    if len(date_range) != 2:
-        st.warning("Please select a valid date range")
-        return
+    filters = render_filter_sidebar(df)
     
-    if not selected_districts:
-        st.warning("Please select at least one district")
+    # Validate inputs
+    if not validate_filters(filters):
         return
     
     # Apply filters
-    filtered_df = apply_filters(
-        df,
-        selected_districts,
-        date_range,
-        price_range,
-        area_range
-    )
+    filtered_df = apply_filters(df, filters)
 
     # Metrics
     render_metrics(filtered_df)

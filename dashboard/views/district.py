@@ -1,9 +1,9 @@
 import streamlit as st
 
 from utils.db import load_data
-from utils.filters import apply_filters
+from utils.filters import apply_filters, validate_filters
 
-from components.filters import render_filter_sidebar
+from components.filters import render_filter_sidebar, render_filter_summary
 from components.sections import render_comparison_section
 
 def app():
@@ -18,24 +18,24 @@ def app():
         st.stop()
 
     # Sidebar filters
-    selected_districts, date_range, price_range, area_range = render_filter_sidebar(df)
+    filters = render_filter_sidebar(df)
+
+    comparison_mode = st.checkbox("Enable Comparison Mode")
+
+    if comparison_mode:
+        st.info("Comparison mode: showing all districts (district filter ignored)")
+        # Apply all filters EXCEPT district
+        active_filters = filters.copy()
+        active_filters['districts'] = []
+    else:
+        active_filters = filters
 
     # Validate inputs
-    if len(date_range) != 2:
-        st.warning("Please select a valid date range")
+    if not validate_filters(active_filters, not comparison_mode):
         return
-    
-    if not selected_districts:
-        st.warning("Please select at least one district")
-        return
-    
-    # Apply filters
-    filtered_df = apply_filters(
-        df,
-        selected_districts,
-        date_range,
-        price_range,
-        area_range
-    )
 
-    render_comparison_section(filtered_df)
+    # Apply filters
+    district_df = apply_filters(df, active_filters)
+
+    render_filter_summary(active_filters)
+    render_comparison_section(district_df)
