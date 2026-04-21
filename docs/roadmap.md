@@ -624,57 +624,74 @@ Refactor the dashboard into a multi-page structure to improve scalability, maint
 - New features can be added per page without affecting others
 - Codebase is significantly easier to maintain and extend
 
-### ⏳ Day 11 — Smart Filtering (Control & Clarity)
+### ✅ Day 11 — Smart Filtering (Control & Clarity) (Completed)
 
 #### Objective
 
 Introduce controlled flexibility in filtering while ensuring behavior remains predictable, transparent, and easy to understand.
 
-#### Tasks
+#### Completed
 
-**Page-Level Filter Overrides**
+**Comparison Mode (District Analysis)**
 
-- Implement “Comparison Mode” in District Analysis:
+- Implemented **Comparison Mode toggle** on District Analysis page
+- Behavior:
   - Default:
-    - Use selected districts from sidebar
-  - Comparison Mode:
-    - Ignore district filter and show all districts
-- Clearly indicate when override is active:
-  - Add UI message (e.g. “Comparison Mode: showing all districts”)
+    - Uses selected districts from sidebar filters
+  - Comparison Mode (enabled):
+    - Overrides district filter and displays **all districts**
+- Enables clear and intentional district comparison workflows
+
+**Active Filter Logic**
+
+- Introduced concept of **active filters** on District Analysis page:
+  - Default filters → user-selected filters from sidebar
+  - Active filters → dynamically adjusted based on comparison mode
+- Ensured all components (charts, summaries, tables) use **active filters**
+- Prevented inconsistencies between UI state and displayed data
 
 **Filter Transparency & Feedback**
 
-- Improve filter summary display:
-  - Clearly show:
-    - selected districts
+- Improved filter summary display:
+  - Clearly shows:
+    - selected districts (or “All districts” in comparison mode)
     - date range
     - price range
     - area range
-- Ensure summary is consistent across all pages
-- Indicate when filters are overridden (e.g. comparison mode active)
+    - total transaction count
+- Added explicit indication when:
+  - Comparison Mode is active
+  - District filter is being overridden
 
 **Empty State Handling**
 
-- Handle cases where filters return no data:
-  - Display clear message:
+- Added handling for empty datasets:
+  - Displays clear message:
     - “No transactions found for selected filters”
-- Prevent charts and tables from rendering invalid/empty visuals
+- Prevented rendering of charts/tables when dataset is empty
+- Improved robustness of user interactions
 
 **Validation & Stability**
 
-- Ensure all pages:
-  - behave consistently with filters
-  - do not break under edge cases
-- Test:
+- Verified consistent behavior across:
+  - normal filtering mode
+  - comparison mode
+- Tested edge cases:
   - empty district selection
-  - extreme price/area ranges
   - narrow date ranges
+  - extreme price/area filters
+- Ensured no regressions in:
+  - filter logic
+  - data integrity
+  - chart rendering
 
-#### Expected Outcome
+#### Key Outcome
 
-- Users clearly understand what data is being shown
-- Comparison workflows become intentional and usable
-- Filtering logic is more flexible without becoming confusing
+- Filtering system is now **more flexible yet predictable**
+- Users can clearly distinguish between:
+  - filtered views
+  - full comparison views
+- Dashboard provides **better transparency and usability**, especially for district-level analysis
 
 ---
 
@@ -698,20 +715,42 @@ Enhance filtering experience by making it responsive to user selections and impr
   - avoid excessive re-renders
   - ensure consistent behavior across pages
 
+**District Filter UX Improvement**
+
+- Improve district multiselect usability:
+  - Add **“Select All” option** for quick full selection
+  - Ensure behavior is intuitive and consistent with:
+    - manual multi-selection
+    - comparison mode override
+- Clearly define interaction logic:
+  - “Select All” = equivalent to selecting all districts
+  - Should not conflict with Comparison Mode (which overrides filter)
+
 **Filter Layout & UX Improvements**
 
 - Improve sidebar organization:
-  - Group related filters logically
-  - Add clear section labels (e.g. “Location”, “Time”, “Property Filters”)
-- Improve spacing and readability
-- Make filter usage more intuitive for first-time users
+  - Group filters into sections:
+    - Location (district)
+    - Time (date range)
+    - Property (price, area)
+- Add clear section labels for readability
+- Improve spacing and visual clarity
 
 **Default Value Optimization**
 
 - Set smarter default filter values:
   - Recent date range (e.g. last 12 months)
   - Reasonable price and area bounds
-- Improve initial dashboard state for better first impression
+- Ensure good “first impression” state when app loads
+
+**State Clarity & Feedback**
+
+- Ensure filter summary reflects:
+  - dynamic slider ranges
+  - district selection (including “All selected” state)
+- Avoid ambiguity between:
+  - “All selected manually”
+  - “Comparison Mode active”
 
 **Optional Enhancements (If Time Permits)**
 
@@ -723,9 +762,166 @@ Enhance filtering experience by making it responsive to user selections and impr
 
 #### Expected Outcome
 
-- Filters feel responsive and adaptive to user input
-- Users avoid invalid or confusing selections
+- Filters feel **responsive, adaptive, and intuitive**
+- Users can quickly:
+  - select all districts
+  - refine data without confusion
+- Clear distinction between:
+  - filtered views
+  - comparison mode behavior
 - Dashboard delivers a smoother, more polished product experience
+
+---
+
+### ⏳ Day 13 — District Ranking & Market Positioning
+
+#### Objective
+
+Introduce clear district-level rankings to help users quickly identify top and bottom performing areas based on key metrics.
+
+#### Tasks
+
+**District Aggregation Layer**
+
+- Compute district-level metrics from filtered dataset:
+  - average price per sqm
+  - median price per sqm
+  - transaction volume
+- Ensure:
+  - consistent use of `final_price_per_sqm`
+  - aggregation respects active filters
+
+**Ranking Table / Visualization**
+
+- Build a ranking table or bar chart:
+  - districts sorted by selected metric
+- Allow sorting by:
+  - average price per sqm
+  - median price per sqm
+  - transaction volume
+- Display:
+  - rank position
+  - district name
+  - selected metric value
+
+**Top / Bottom Highlighting**
+
+- Clearly highlight:
+  - top N districts (e.g. top 5)
+  - bottom N districts
+- Optional:
+  - use color or labels to distinguish tiers
+
+**User Controls**
+
+- Add simple controls:
+  - metric selector (avg / median / volume)
+  - optional: top N selector
+- Ensure controls integrate smoothly with existing filters
+
+**Integration with Existing Pages**
+
+- Decide placement:
+  - District Analysis page (recommended)
+- Ensure:
+  - no duplication of logic
+  - consistent UI with other components
+
+**Validation & Edge Cases**
+
+- Handle:
+  - small datasets (few districts)
+  - ties in ranking
+  - empty filtered data
+- Ensure stable rendering across all filter states
+
+#### Expected Outcome
+
+- Users can quickly identify:
+  - most expensive districts
+  - most active districts
+- Enhances decision-making by turning data into **clear rankings**
+- Bridges gap between exploration and actionable insight
+
+---
+
+### ⏳ Day 14 — Map Visualization (Geographic Insight)
+
+#### Objective
+
+Introduce a geographic view of the data to enhance spatial understanding of pricing and transaction patterns.
+
+#### Tasks
+
+**Data Preparation**
+
+- Aggregate district-level metrics:
+  - average / median price per sqm
+  - transaction volume
+- Ensure alignment with:
+  - active filters
+  - ranking metrics (Day 13)
+
+**GeoJSON Integration**
+
+- Source Taiwan district-level GeoJSON dataset
+- Map dataset districts to your `district` field:
+  - handle naming inconsistencies if any
+- Validate:
+  - all districts correctly matched
+  - no missing or misaligned regions
+
+**Map Visualization (MVP)**
+
+- Implement basic map using Streamlit-compatible library:
+  - e.g. `st.pydeck_chart` or `plotly`
+- Choose visualization approach:
+  - Choropleth (recommended):
+    - color intensity = price per sqm or volume
+- Keep design simple and functional:
+  - prioritize clarity over styling
+
+**User Controls**
+
+- Allow user to select metric displayed on map:
+  - average price
+  - median price
+  - transaction volume
+- Ensure consistency with:
+  - Day 13 ranking metrics
+
+**Tooltip & Interactivity**
+
+- Add hover tooltip showing:
+  - district name
+  - selected metric value
+- Optional:
+  - include multiple metrics in tooltip
+
+**Integration with Dashboard**
+
+- Decide placement:
+  - Overview page (high-level view) OR
+  - District Analysis page (deeper analysis)
+- Ensure:
+  - consistent layout and sizing
+  - no disruption to existing components
+
+**Validation & Edge Cases**
+
+- Handle:
+  - missing geo data
+  - unmatched districts
+  - empty filtered dataset
+- Ensure graceful fallback (e.g. message instead of map)
+
+#### Expected Outcome
+
+- Users gain **spatial understanding** of the market
+- Enables:
+  - quick identification of high/low price regions
+  - geographic pattern recognition
+- Significantly enhances dashboard’s analytical depth and product quality
 
 ---
 
