@@ -1,10 +1,10 @@
 import streamlit as st
 
 from utils.db import load_data
-from utils.filters import apply_filters, validate_filters
 
-from components.filters import render_filter_sidebar, render_filter_summary
+from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.sections import render_comparison_section
+from controllers.filter_controller import apply_filter_pipeline
 
 def app():
     st.title("District Analysis")
@@ -17,25 +17,27 @@ def app():
         st.error(str(e))
         st.stop()
 
-    # Sidebar filters
-    filters = render_filter_sidebar(df)
+    comparison_mode = st.toggle("Enable Comparison Mode", value=False)
 
-    comparison_mode = st.checkbox("Enable Comparison Mode")
+    base_filters = render_filter_sidebar(df, comparison_mode)
+
+    all_districts = sorted(df['district'].unique())
 
     if comparison_mode:
-        st.info("Comparison mode: showing all districts (district filter ignored)")
-        # Apply all filters EXCEPT district
-        active_filters = filters.copy()
-        active_filters['districts'] = []
+        active_filters = {
+            **base_filters,
+            'districts': all_districts
+        }
     else:
-        active_filters = filters
+        active_filters = base_filters
 
-    # Validate inputs
-    if not validate_filters(active_filters, not comparison_mode):
+    filtered_df, filters = apply_filter_pipeline(df, active_filters)
+
+    if filtered_df is None:
         return
+    
+    if comparison_mode:
+        st.info("Comparison Mode Active: Showing all districts.")
 
-    # Apply filters
-    district_df = apply_filters(df, active_filters)
-
-    render_filter_summary(active_filters)
-    render_comparison_section(district_df)
+    render_filter_summary(filters)
+    render_comparison_section(filtered_df)

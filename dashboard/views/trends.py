@@ -3,8 +3,9 @@ import streamlit as st
 from utils.db import load_data
 from utils.filters import apply_filters, validate_filters
 
-from components.filters import render_filter_sidebar
+from components.filters_ui import render_filter_sidebar
 from components.sections import render_trend_section_allinone, render_trend_section_bylevel
+from controllers.filter_controller import apply_filter_pipeline
 
 def app():
     st.title("Market Trends")
@@ -17,15 +18,14 @@ def app():
         st.error(str(e))
         st.stop()
 
-    # Sidebar filters
-    filters = render_filter_sidebar(df)
+    # Sidebar inputs
+    base_filters = render_filter_sidebar(df)
 
-    # Validate inputs
-    if not validate_filters(filters):
+    # Full pipeline
+    filtered_df, filters = apply_filter_pipeline(df, base_filters)
+
+    if filtered_df is None:
         return
-    
-    # Apply filters
-    filtered_df = apply_filters(df, filters)
 
     render_trend_section_allinone(filtered_df)
     render_trend_section_bylevel(filtered_df)

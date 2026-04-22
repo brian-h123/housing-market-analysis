@@ -5,7 +5,7 @@ def apply_filters(df, filters):
     filtered_df = df.copy()
     
     # District filter
-    if filters['districts']:
+    if filters.get('districts'):
         filtered_df = filtered_df[
             filtered_df['district'].isin(filters['districts'])
         ]
@@ -20,28 +20,30 @@ def apply_filters(df, filters):
     ]
 
     # Price filter
-    filtered_df = filtered_df[
-        (filtered_df["final_price_per_sqm"] >= filters["min_price"]) &
-        (filtered_df["final_price_per_sqm"] <= filters["max_price"])
-    ]
+    if filters.get('min_price') is not None and filters.get('max_price') is not None:
+        filtered_df = filtered_df[
+            (filtered_df["final_price_per_sqm"] >= filters["min_price"]) &
+            (filtered_df["final_price_per_sqm"] <= filters["max_price"])
+        ]
 
     # Area filter
-    filtered_df = filtered_df[
-        (filtered_df["area"] >= filters["min_area"]) &
-        (filtered_df["area"] <= filters["max_area"])
-    ]
+    if filters.get('min_area') is not None and filters.get('max_area') is not None:
+        filtered_df = filtered_df[
+            (filtered_df["area"] >= filters["min_area"]) &
+            (filtered_df["area"] <= filters["max_area"])
+        ]
 
     # Final safety cleanup
     filtered_df = filtered_df.dropna(subset=["final_price_per_sqm", "area"])
 
     return filtered_df
 
-def validate_filters(filters, require_district=True):
+def validate_filters(filters):
     if not filters.get('start_date') or not filters.get('end_date'):
         st.warning('Please select a valid date range')
         return False
 
-    if require_district and not filters.get('districts'):
+    if not filters.get('districts'):
         st.warning("Please select at least one district")
         return False
     
