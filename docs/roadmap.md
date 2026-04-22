@@ -695,81 +695,78 @@ Introduce controlled flexibility in filtering while ensuring behavior remains pr
 
 ---
 
-### ⏳ Day 12 — Smart Filtering (Responsiveness & UX)
+### ✅ Day 12 — Smart Filtering (Responsiveness & UX) (Completed)
 
 #### Objective
 
 Enhance filtering experience by making it responsive to user selections and improving overall usability and interaction design.
 
-#### Tasks
+#### Completed
 
-**Dynamic / Reactive Filters**
+**Reactive / Dynamic Filters**
 
-- Update price and area sliders dynamically based on:
+- Implemented dynamic price and area sliders that adjust based on:
   - selected districts
   - selected date range
-- Ensure:
-  - no impossible selections
-  - no misleading ranges
-- Maintain stability:
-  - avoid excessive re-renders
-  - ensure consistent behavior across pages
+- Ensured:
+  - no invalid or impossible selections
+  - filter ranges always reflect the current dataset
+- Maintained stability by controlling re-renders and preserving consistent behavior across pages
 
-**District Filter UX Improvement**
+**Hierarchical Filtering System**
 
-- Improve district multiselect usability:
-  - Add **“Select All” option** for quick full selection
-  - Ensure behavior is intuitive and consistent with:
-    - manual multi-selection
-    - comparison mode override
-- Clearly define interaction logic:
+- Redesigned sidebar filters into a **hierarchical structure**:
+  - upstream filters (district, date) influence downstream filters (price, area)
+- Established clear dependency flow:
+  - district → date → price / area
+- Improved logical consistency and prevented misleading filter combinations
+
+**District Filter UX Improvements**
+
+- Added **“Select All” option** for district multiselect
+- Standardized behavior:
   - “Select All” = equivalent to selecting all districts
-  - Should not conflict with Comparison Mode (which overrides filter)
+  - Manual selection and “Select All” remain consistent
+- Ensured compatibility with:
+  - Comparison Mode (override still works as intended)
 
-**Filter Layout & UX Improvements**
+**Filter Layout & Organization**
 
-- Improve sidebar organization:
-  - Group filters into sections:
-    - Location (district)
-    - Time (date range)
-    - Property (price, area)
-- Add clear section labels for readability
-- Improve spacing and visual clarity
+- Grouped sidebar filters into clear sections:
+  - Location (district)
+  - Time (date range)
+  - Property (price, area)
+- Improved spacing and labeling for better readability
+- Created a more intuitive and structured user experience
 
-**Default Value Optimization**
+**Filter State Clarity & Feedback**
 
-- Set smarter default filter values:
-  - Recent date range (e.g. last 12 months)
-  - Reasonable price and area bounds
-- Ensure good “first impression” state when app loads
-
-**State Clarity & Feedback**
-
-- Ensure filter summary reflects:
+- Updated filter summary to reflect:
   - dynamic slider ranges
   - district selection (including “All selected” state)
-- Avoid ambiguity between:
-  - “All selected manually”
-  - “Comparison Mode active”
+- Clarified distinction between:
+  - manual “all districts selected”
+  - Comparison Mode override
+- Improved transparency of current filter state
 
-**Optional Enhancements (If Time Permits)**
+**Validation & Stability**
 
-- Top N district selector for comparison charts
-- Sorting options:
-  - average price
-  - median price
-  - transaction volume
+- Tested filter behavior across:
+  - different district selections
+  - varying date ranges
+  - edge cases (narrow ranges, near-empty datasets)
+- Ensured:
+  - no inconsistencies between filters and displayed data
+  - no regression in existing functionality
 
-#### Expected Outcome
+#### Key Outcome
 
-- Filters feel **responsive, adaptive, and intuitive**
-- Users can quickly:
-  - select all districts
-  - refine data without confusion
-- Clear distinction between:
-  - filtered views
-  - comparison mode behavior
-- Dashboard delivers a smoother, more polished product experience
+- Filtering system is now **responsive, structured, and intuitive**
+- Users experience:
+  - smoother interactions
+  - clearer filter logic
+  - reduced confusion from invalid selections
+- Dashboard achieves a more **polished, product-level UX**, especially for multi-dimensional filtering workflows
 
 ---
 
@@ -790,58 +787,62 @@ Introduce clear district-level rankings to help users quickly identify top and b
 - Ensure:
   - consistent use of `final_price_per_sqm`
   - aggregation respects active filters
+- Structure output as a reusable aggregated dataframe
 
-**Ranking Table / Visualization**
+**Ranking Visualization (Core MVP)**
 
 - Build a ranking table or bar chart:
   - districts sorted by selected metric
-- Allow sorting by:
+- Default behavior:
+  - sort by average price per sqm (descending)
+- Display:
+  - district name
+  - selected metric value
+  - transaction volume (as supporting context)
+
+**Metric Selection (Essential Control)**
+
+- Add simple selector for ranking metric:
   - average price per sqm
   - median price per sqm
   - transaction volume
-- Display:
-  - rank position
-  - district name
-  - selected metric value
-
-**Top / Bottom Highlighting**
-
-- Clearly highlight:
-  - top N districts (e.g. top 5)
-  - bottom N districts
-- Optional:
-  - use color or labels to distinguish tiers
-
-**User Controls**
-
-- Add simple controls:
-  - metric selector (avg / median / volume)
-  - optional: top N selector
-- Ensure controls integrate smoothly with existing filters
-
-**Integration with Existing Pages**
-
-- Decide placement:
-  - District Analysis page (recommended)
 - Ensure:
-  - no duplication of logic
-  - consistent UI with other components
+  - sorting updates dynamically with metric selection
+  - consistent formatting across metrics
 
-**Validation & Edge Cases**
+**Integration with District Analysis Page**
+
+- Add ranking section to District Analysis page
+- Position:
+  - below comparison charts (recommended)
+- Ensure:
+  - no duplication of aggregation logic
+  - consistent styling with existing components
+
+**Validation & Edge Case Handling**
 
 - Handle:
   - small datasets (few districts)
   - ties in ranking
   - empty filtered data
-- Ensure stable rendering across all filter states
+- Ensure:
+  - stable rendering across all filter states
+  - clear fallback message when no data is available
+
+#### Deferred Enhancements (Future Iteration)
+
+- Top N / Bottom N selector
+- Advanced sorting options (ascending / descending toggle)
+- Highlighting tiers (e.g. top 5 vs rest)
+- Visual emphasis (color gradients, badges)
 
 #### Expected Outcome
 
 - Users can quickly identify:
   - most expensive districts
   - most active districts
-- Enhances decision-making by turning data into **clear rankings**
-- Bridges gap between exploration and actionable insight
+- Transforms raw comparisons into **clear, actionable rankings**
+- Keeps implementation focused, while leaving room for future UX enhancements
 
 ---
 
@@ -849,63 +850,65 @@ Introduce clear district-level rankings to help users quickly identify top and b
 
 #### Objective
 
-Introduce a geographic view of the data to enhance spatial understanding of pricing and transaction patterns.
+Introduce a geographic view of district-level metrics to enhance spatial understanding of pricing and transaction patterns.
+
+This builds directly on the **district aggregation layer introduced in Day 13**.
+
+---
 
 #### Tasks
 
-**Data Preparation**
+**Reuse District Aggregation Layer (From Day 13)**
 
-- Aggregate district-level metrics:
-  - average / median price per sqm
+- Use the same aggregated dataset from Day 13:
+  - average price per sqm
+  - median price per sqm
   - transaction volume
-- Ensure alignment with:
-  - active filters
-  - ranking metrics (Day 13)
+- Ensure consistency between:
+  - ranking values (Day 13)
+  - map values (Day 14)
 
 **GeoJSON Integration**
 
 - Source Taiwan district-level GeoJSON dataset
-- Map dataset districts to your `district` field:
+- Map dataset districts to `district` field:
   - handle naming inconsistencies if any
 - Validate:
   - all districts correctly matched
   - no missing or misaligned regions
 
-**Map Visualization (MVP)**
+**Choropleth Map (MVP)**
 
-- Implement basic map using Streamlit-compatible library:
-  - e.g. `st.pydeck_chart` or `plotly`
-- Choose visualization approach:
-  - Choropleth (recommended):
-    - color intensity = price per sqm or volume
-- Keep design simple and functional:
-  - prioritize clarity over styling
+- Implement district-level choropleth map using:
+  - `st.pydeck_chart` or Plotly
+- Visualization logic:
+  - color intensity represents selected metric
+- Default metric:
+  - average price per sqm
 
-**User Controls**
+**Metric Selector (Shared with Day 13)**
 
-- Allow user to select metric displayed on map:
-  - average price
-  - median price
+- Allow user to switch metric:
+  - average price per sqm
+  - median price per sqm
   - transaction volume
 - Ensure consistency with:
-  - Day 13 ranking metrics
+  - Day 13 ranking selector (same metric source of truth)
 
 **Tooltip & Interactivity**
 
 - Add hover tooltip showing:
   - district name
   - selected metric value
-- Optional:
-  - include multiple metrics in tooltip
+  - transaction volume (optional secondary metric)
 
 **Integration with Dashboard**
 
-- Decide placement:
-  - Overview page (high-level view) OR
-  - District Analysis page (deeper analysis)
+- Place map in:
+  - Overview page (recommended for high-level insight)
 - Ensure:
-  - consistent layout and sizing
-  - no disruption to existing components
+  - consistent sizing and layout
+  - no duplication of ranking visuals
 
 **Validation & Edge Cases**
 
@@ -913,15 +916,17 @@ Introduce a geographic view of the data to enhance spatial understanding of pric
   - missing geo data
   - unmatched districts
   - empty filtered dataset
-- Ensure graceful fallback (e.g. message instead of map)
+- Ensure graceful fallback (message instead of map)
+
+---
 
 #### Expected Outcome
 
-- Users gain **spatial understanding** of the market
+- Users gain **spatial understanding of pricing and activity**
 - Enables:
-  - quick identification of high/low price regions
-  - geographic pattern recognition
-- Significantly enhances dashboard’s analytical depth and product quality
+  - quick identification of high/low value regions
+  - visual validation of ranking patterns (Day 13)
+- Complements ranking by adding a **geographic dimension to the same dataset**
 
 ---
 
