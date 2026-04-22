@@ -23,6 +23,8 @@ def app():
         st.error(str(e))
         st.stop()
 
+    all_districts = sorted(df["district"].unique())
+
     # Sidebar inputs
     base_filters = render_filter_sidebar(df)
 
@@ -33,7 +35,7 @@ def app():
         return
     
     st.write("Filtered rows:", len(filtered_df))
-    render_filter_summary(filters)
+    render_filter_summary(filters, all_districts)
 
     # Metrics
     render_metrics(filtered_df)

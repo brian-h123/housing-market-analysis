@@ -39,5 +39,5 @@ def app():
     if comparison_mode:
         st.info("Comparison Mode Active: Showing all districts.")
 
-    render_filter_summary(filters)
+    render_filter_summary(filters, all_districts, comparison_mode=comparison_mode)
     render_comparison_section(filtered_df)

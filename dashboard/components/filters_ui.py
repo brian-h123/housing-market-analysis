@@ -6,13 +6,19 @@ def render_filter_sidebar(df, comparison_mode=False):
     st.sidebar.header("📍 Location")
 
     districts = sorted(df['district'].unique())
-    selected_districts = st.sidebar.multiselect(
-        'District',
-        districts,
-        default=districts,
-        disabled=comparison_mode
-    )
 
+    select_all = st.sidebar.checkbox("Select All Districts", value=True, disabled=comparison_mode)
+    if select_all:
+        selected_districts = districts
+    else:
+        selected_districts = st.sidebar.multiselect(
+            'District',
+            districts,
+            default=districts[:3],
+            disabled=comparison_mode
+        )
+
+    st.sidebar.markdown('---')
     # Date filter
     st.sidebar.header("📅 Time")
 
@@ -28,6 +34,8 @@ def render_filter_sidebar(df, comparison_mode=False):
         max_value = max_date
     )
 
+    st.sidebar.markdown('---')
+
     return {
         'districts': selected_districts,
         'start_date': date_range[0],
@@ -38,11 +46,31 @@ def render_filter_sidebar(df, comparison_mode=False):
         'max_area': None
     }
 
-def render_filter_summary(filters):
-    st.caption(f"""
+def render_filter_summary(filters, all_districts, comparison_mode = False):
+    # st.caption(f"""
+    # **Filters Applied:**
+    # - Districts: {', '.join(filters['districts']) if filters['districts'] else 'All'}
+    # - Date: {filters['start_date']} → {filters['end_date']}
+    # - Price: {filters['min_price']} → {filters['max_price']}
+    # - Area: {filters['min_area']} → {filters['max_area']}
+    # """)
+
+    if comparison_mode:
+        district_label = "All districts (Comparison Mode)"
+    elif not filters['districts']:
+        district_label = 'No districts selected'
+    elif len(filters['districts']) == len(all_districts):
+        district_label = 'All districts (Selected)'
+    elif len(filters['districts']) <= 3:
+        district_label = ", ".join(filters['districts'])
+    else:
+        district_label = f'{len(filters['districts'])} districts selected'
+
+    summary = f"""
     **Filters Applied:**
-    - Districts: {', '.join(filters['districts']) if filters['districts'] else 'All'}
+    - Districts: {district_label}
     - Date: {filters['start_date']} → {filters['end_date']}
     - Price: {filters['min_price']} → {filters['max_price']}
     - Area: {filters['min_area']} → {filters['max_area']}
-    """)
+    """
+    st.markdown(summary)

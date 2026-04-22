@@ -3,7 +3,7 @@ import streamlit as st
 from utils.db import load_data
 from utils.filters import apply_filters, validate_filters
 
-from components.filters_ui import render_filter_sidebar
+from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.sections import render_trend_section_allinone, render_trend_section_bylevel
 from controllers.filter_controller import apply_filter_pipeline
 
@@ -18,6 +18,8 @@ def app():
         st.error(str(e))
         st.stop()
 
+    all_districts = sorted(df["district"].unique())
+
     # Sidebar inputs
     base_filters = render_filter_sidebar(df)
 
@@ -27,5 +29,6 @@ def app():
     if filtered_df is None:
         return
 
+    render_filter_summary(filters, all_districts)
     render_trend_section_allinone(filtered_df)
     render_trend_section_bylevel(filtered_df)
