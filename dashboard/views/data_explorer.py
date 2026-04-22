@@ -1,10 +1,10 @@
 import streamlit as st
 
 from utils.db import load_data
-from utils.filters import apply_filters, validate_filters
 
-from components.filters import render_filter_sidebar
+from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.sections import render_table
+from controllers.filter_controller import apply_filter_pipeline
 
 def app():
     st.title("Data Explorer")
@@ -17,14 +17,16 @@ def app():
         st.error(str(e))
         st.stop()
 
-    # Sidebar filters
-    filters = render_filter_sidebar(df)
+    all_districts = sorted(df["district"].unique())
 
-    # Validate inputs
-    if not validate_filters(filters):
+    # Sidebar inputs
+    base_filters = render_filter_sidebar(df)
+
+    # Full pipeline
+    filtered_df, filters = apply_filter_pipeline(df, base_filters)
+
+    if filtered_df is None:
         return
-    
-    # Apply filters
-    filtered_df = apply_filters(df, filters)
 
+    render_filter_summary(filters, all_districts)
     render_table(filtered_df)
