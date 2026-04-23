@@ -770,79 +770,76 @@ Enhance filtering experience by making it responsive to user selections and impr
 
 ---
 
-### ⏳ Day 13 — District Ranking & Market Positioning
+### ✅ Day 13 — District Ranking & Market Positioning (Completed)
 
 #### Objective
 
 Introduce clear district-level rankings to help users quickly identify top and bottom performing areas based on key metrics.
 
-#### Tasks
+#### Completed
 
 **District Aggregation Layer**
 
-- Compute district-level metrics from filtered dataset:
-  - average price per sqm
-  - median price per sqm
-  - transaction volume
-- Ensure:
-  - consistent use of `final_price_per_sqm`
-  - aggregation respects active filters
-- Structure output as a reusable aggregated dataframe
+- Built a reusable district-level aggregation pipeline based on the filtered dataset
+- Computed key metrics per district:
+  - Average price per sqm (`mean`)
+  - Median price per sqm
+  - Transaction volume (count)
+- Ensured aggregation is fully aligned with:
+  - `final_price_per_sqm`
+  - Active filters (district, date, price, area)
+- Structured output as a consistent dataframe for reuse across ranking and visualization components
 
 **Ranking Visualization (Core MVP)**
 
-- Build a ranking table or bar chart:
-  - districts sorted by selected metric
-- Default behavior:
-  - sort by average price per sqm (descending)
-- Display:
-  - district name
-  - selected metric value
-  - transaction volume (as supporting context)
+- Implemented a district ranking view (table / bar chart)
+- Default sorting:
+  - Descending by average price per sqm
+- Displayed key ranking information:
+  - District name
+  - Selected metric value
+- Ensured ranking dynamically updates based on:
+  - filtered dataset
+  - selected metric
 
-**Metric Selection (Essential Control)**
+**Metric Selection (Core Control Feature)**
 
-- Add simple selector for ranking metric:
-  - average price per sqm
-  - median price per sqm
-  - transaction volume
-- Ensure:
-  - sorting updates dynamically with metric selection
-  - consistent formatting across metrics
+- Added metric selector for ranking view:
+  - Average price per sqm
+  - Median price per sqm
+  - Transaction volume
+- Implemented dynamic re-sorting based on selected metric
+- Ensured consistent formatting across all metric types
 
 **Integration with District Analysis Page**
 
-- Add ranking section to District Analysis page
-- Position:
-  - below comparison charts (recommended)
-- Ensure:
-  - no duplication of aggregation logic
-  - consistent styling with existing components
+- Integrated ranking section into the District Analysis page
+- Positioned ranking below comparison visualizations for logical flow:
+  - comparison → ranking → insights
+- Ensured no duplication of aggregation logic by reusing shared pipeline
 
 **Validation & Edge Case Handling**
 
-- Handle:
-  - small datasets (few districts)
-  - ties in ranking
-  - empty filtered data
-- Ensure:
-  - stable rendering across all filter states
-  - clear fallback message when no data is available
+- Handled edge cases:
+  - Very small datasets (few districts)
+  - Tied metric values across districts
+  - Empty filtered results
+- Added fallback UI for empty states:
+  - “No data available for current filters”
+- Verified stability across all filter combinations
 
-#### Deferred Enhancements (Future Iteration)
+#### Key Outcome
 
-- Top N / Bottom N selector
-- Advanced sorting options (ascending / descending toggle)
-- Highlighting tiers (e.g. top 5 vs rest)
-- Visual emphasis (color gradients, badges)
+- Users can now clearly identify:
 
-#### Expected Outcome
+  - Most expensive districts
+  - Most active districts by transaction volume
+  - Relative positioning of districts across multiple metrics
 
-- Users can quickly identify:
-  - most expensive districts
-  - most active districts
-- Transforms raw comparisons into **clear, actionable rankings**
-- Keeps implementation focused, while leaving room for future UX enhancements
+- Transforms raw aggregated data into a **clear, decision-oriented ranking system**
+
+- Establishes a foundation for future enhancements such as:
+  - geographic visualization (Day 14 map integration)
 
 ---
 
@@ -860,7 +857,7 @@ This builds directly on the **district aggregation layer introduced in Day 13**.
 
 **Reuse District Aggregation Layer (From Day 13)**
 
-- Use the same aggregated dataset from Day 13:
+- Reuse existing district-level aggregation output:
   - average price per sqm
   - median price per sqm
   - transaction volume
@@ -872,61 +869,139 @@ This builds directly on the **district aggregation layer introduced in Day 13**.
 
 - Source Taiwan district-level GeoJSON dataset
 - Map dataset districts to `district` field:
-  - handle naming inconsistencies if any
+  - Handle naming mismatches (if any)
 - Validate:
-  - all districts correctly matched
-  - no missing or misaligned regions
+  - All districts correctly matched
+  - No missing or misaligned regions
 
 **Choropleth Map (MVP)**
 
 - Implement district-level choropleth map using:
   - `st.pydeck_chart` or Plotly
 - Visualization logic:
-  - color intensity represents selected metric
+  - Color intensity represents selected metric
 - Default metric:
-  - average price per sqm
+  - Average price per sqm
 
-**Metric Selector (Shared with Day 13)**
+**Metric Selector (Shared Control with Ranking)**
 
-- Allow user to switch metric:
-  - average price per sqm
-  - median price per sqm
-  - transaction volume
-- Ensure consistency with:
-  - Day 13 ranking selector (same metric source of truth)
+- Add metric selector for map visualization:
+  - Average price per sqm
+  - Median price per sqm
+  - Transaction volume
+- Ensure consistency with Day 13 ranking metric selection logic
 
 **Tooltip & Interactivity**
 
 - Add hover tooltip showing:
-  - district name
-  - selected metric value
-  - transaction volume (optional secondary metric)
+  - District name
+  - Selected metric value
+  - Transaction volume (optional secondary metric)
 
 **Integration with Dashboard**
 
-- Place map in:
-  - Overview page (recommended for high-level insight)
+- Place map in **Overview page**
 - Ensure:
-  - consistent sizing and layout
-  - no duplication of ranking visuals
+  - Clear visual hierarchy (map as high-level insight layer)
+  - No duplication with ranking view
 
 **Validation & Edge Cases**
 
 - Handle:
-  - missing geo data
-  - unmatched districts
-  - empty filtered dataset
-- Ensure graceful fallback (message instead of map)
+  - Missing or unmatched GeoJSON regions
+  - Empty filtered dataset
+- Ensure graceful fallback UI when no data is available
 
 ---
 
 #### Expected Outcome
 
-- Users gain **spatial understanding of pricing and activity**
+- Users gain **spatial understanding of housing market distribution**
 - Enables:
-  - quick identification of high/low value regions
-  - visual validation of ranking patterns (Day 13)
-- Complements ranking by adding a **geographic dimension to the same dataset**
+  - Quick identification of high/low value regions
+  - Visual validation of ranking results from Day 13
+- Establishes foundation for future spatial analytics (heatmaps, clustering, etc.)
+
+---
+
+### ⏳ Day 15 — Ranking & Map Enhancements (UX Refinement & Product Polish)
+
+#### Objective
+
+Improve usability and analytical depth of:
+
+- District ranking system (Day 13)
+- Map visualization (Day 14)
+
+Focus is on **user control, interpretability, and analytical flexibility**, rather than new features.
+
+#### Tasks
+
+**Top N / Bottom N Toggle**
+
+- Add control to filter ranking results:
+  - Top N districts (e.g. top 5 / top 10)
+  - Bottom N districts
+  - Full list toggle
+- Ensure ranking dynamically updates based on selection
+- Improve focus by reducing visual noise in large district lists
+
+**Sorting Controls**
+
+- Add explicit sorting options:
+  - Ascending / descending toggle
+- Allow user control over ranking direction per metric
+- Ensure consistency across:
+  - average price per sqm
+  - median price per sqm
+  - transaction volume
+
+**Ranking Readability Improvements**
+
+- Improve table/bar chart clarity:
+  - Better spacing and alignment
+  - Highlight selected metric column
+- Optional:
+  - Subtle emphasis for top-ranked districts
+
+**Metric Visual Clarity Improvements**
+
+- Improve color scaling for choropleth map:
+  - Reduce skew from extreme values
+  - Improve contrast between mid-tier districts
+
+**Tooltip Enrichment**
+
+- Enhance hover tooltip:
+  - Add ranking position (if available)
+  - Improve formatting of metric values (e.g. thousands separators)
+
+**Legend & Interpretability**
+
+- Improve map legend clarity:
+  - Better labeling of metric scale
+  - More intuitive color interpretation
+
+**UX Consistency Improvements**
+
+- Ensure ranking and map share:
+  - Same metric selector logic
+  - Same data source (single aggregation layer)
+- Align visual language across both components
+
+**Validation & Stability**
+
+- Test across:
+  - extreme filter conditions (very few districts)
+  - full dataset view
+  - comparison between ranking vs map consistency
+
+#### Expected Outcome
+
+- Ranking becomes **more focused and readable**
+- Map becomes **more interpretable and decision-friendly**
+- Both views work together as a unified spatial + analytical system
+- Dashboard moves closer to a **polished analytical product (not just a prototype)**
 
 ---
 
