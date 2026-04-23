@@ -5,25 +5,54 @@ from .charts import (
     plot_price_trend_allinone,
     plot_price_trend_bylevel
 )
+from utils.ui_helpers import handle_empty_data
+
+def render_quick_trend(df):
+    if handle_empty_data(df, "No data for Trend chart"):
+        return
+    
+    st.subheader("Market Trend (Monthly)")
+    fig = plot_price_trend_bylevel(df, 'Monthly')
+    st.pyplot(fig)
+
+def render_quick_insight(df):
+    if handle_empty_data(df, "No data for Insight chart"):
+        return
+    
+    st.subheader("Quick District Snapshot")
+    fig = plot_district_comparison(df)
+    st.pyplot(fig)
 
 def render_distribution_section(df):
+    if handle_empty_data(df, "No data for Price distribution"):
+        return
+
     st.subheader('Price Distribution')
     st.caption("Shows spread of transaction prices within selected filters")
     fig = plot_price_distribution(df)
     st.pyplot(fig)
 
 def render_comparison_section(df):
+    if handle_empty_data(df, "No data for District comparison"):
+        return
+
     st.subheader('District Comparison')
     st.caption("Average price per sqm by district (numbers in brackets = transaction count)")
     fig = plot_district_comparison(df)
     st.pyplot(fig)
 
 def render_trend_section_allinone(df):
+    if handle_empty_data(df, "No data for Price trend"):
+        return
+
     st.subheader('Price Trend (Daily + Smoothed)')
     fig = plot_price_trend_allinone(df)
     st.pyplot(fig)
 
 def render_trend_section_bylevel(df):
+    if handle_empty_data(df, "No data for Price trend over time"):
+        return
+
     col1, col2 = st.columns([3, 1])
     with col1:
         st.subheader("Price Trend Over Time")
@@ -38,6 +67,9 @@ def render_trend_section_bylevel(df):
     st.pyplot(fig)
 
 def render_table(df):
+    if handle_empty_data(df, "No data for table"):
+        return
+
     st.subheader("Sample Transactions")
     st.caption("Showing most recent transactions based on selected filters")
     display_df = df.copy()

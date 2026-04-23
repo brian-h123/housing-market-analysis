@@ -1,12 +1,13 @@
 import streamlit as st
 
 from utils.db import load_data
+from utils.ui_helpers import guard_page_data
 
 from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.metrics import render_metrics
-from components.charts import (
-    plot_price_trend_bylevel,
-    plot_district_comparison
+from components.sections import (
+    render_quick_insight,
+    render_quick_trend
 )
 from controllers.filter_controller import apply_filter_pipeline
 
@@ -31,7 +32,7 @@ def app():
     # Full pipeline
     filtered_df, filters = apply_filter_pipeline(df, base_filters)
 
-    if filtered_df is None:
+    if guard_page_data(filtered_df):
         return
     
     st.write("Filtered rows:", len(filtered_df))
@@ -41,9 +42,7 @@ def app():
     render_metrics(filtered_df)
 
     # High level trend
-    st.subheader("Market Trend (Monthly)")
-    st.pyplot(plot_price_trend_bylevel(filtered_df, 'Monthly'))
+    render_quick_trend(filtered_df)
 
     # Quick Insight
-    st.subheader("Quick District Snapshot")
-    st.pyplot(plot_district_comparison(filtered_df))
+    render_quick_insight(filtered_df)
