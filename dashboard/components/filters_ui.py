@@ -47,14 +47,6 @@ def render_filter_sidebar(df, comparison_mode=False):
     }
 
 def render_filter_summary(filters, all_districts, comparison_mode = False):
-    # st.caption(f"""
-    # **Filters Applied:**
-    # - Districts: {', '.join(filters['districts']) if filters['districts'] else 'All'}
-    # - Date: {filters['start_date']} → {filters['end_date']}
-    # - Price: {filters['min_price']} → {filters['max_price']}
-    # - Area: {filters['min_area']} → {filters['max_area']}
-    # """)
-
     if comparison_mode:
         district_label = "All districts (Comparison Mode)"
     elif not filters['districts']:

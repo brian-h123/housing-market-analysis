@@ -1,7 +1,7 @@
 import streamlit as st
 
 from utils.db import load_data
-from utils.filters import apply_filters, validate_filters
+from utils.ui_helpers import guard_page_data
 
 from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.sections import render_trend_section_allinone, render_trend_section_bylevel
@@ -26,7 +26,7 @@ def app():
     # Full pipeline
     filtered_df, filters = apply_filter_pipeline(df, base_filters)
 
-    if filtered_df is None:
+    if guard_page_data(filtered_df):
         return
 
     render_filter_summary(filters, all_districts)
