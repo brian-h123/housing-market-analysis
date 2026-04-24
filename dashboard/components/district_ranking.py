@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 
 from utils.aggregation import (
-    compute_district_metrics,
+    get_district_aggregation,
     rank_districts,
     METRIC_MAP
 )
@@ -21,7 +21,7 @@ def render_district_ranking(df):
         return
     
     # Aggregation + ranking
-    agg_df = compute_district_metrics(df)
+    agg_df = get_district_aggregation(df)
     ranked_df = rank_districts(agg_df, metric_key)
 
     metric_col = METRIC_MAP[metric_key]

@@ -1,10 +1,10 @@
 METRIC_MAP = {
-    'Average Price': 'avg_price_per_sqm',
-    'Median Price': 'median_price_per_sqm',
+    'Average Price per SQM': 'avg_price_per_sqm',
+    'Median Price per SQM': 'median_price_per_sqm',
     'Transaction Volume': 'transaction_volume'
 }
 
-def compute_district_metrics(df):
+def get_district_aggregation(df):
     agg_df = (
         df.groupby('district')
         .agg(
