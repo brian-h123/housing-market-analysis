@@ -9,9 +9,8 @@ from components.sections import (
     render_quick_insight,
     render_quick_trend
 )
+from components.map import render_map
 from controllers.filter_controller import apply_filter_pipeline
-
-import pandas as pd
 
 def app():
     st.title("Overview Dashboard")
@@ -40,6 +39,9 @@ def app():
 
     # Metrics
     render_metrics(filtered_df)
+
+    # Map insight
+    render_map(filtered_df)
 
     # High level trend
     render_quick_trend(filtered_df)
