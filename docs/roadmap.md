@@ -1076,6 +1076,180 @@ A complete transition from **data analysis → interactive analytical tool**, de
 
 ---
 
+# Phase 3 — Data Science & Predictive Intelligence
+
+## Phase 3 Overview
+
+With a fully functional analytical dashboard in place, this phase focuses on:
+
+- Introducing machine learning capabilities
+- Enabling predictive analysis for property valuation
+- Enhancing the project with decision-support features
+
+### Goal
+
+Transform the dashboard from an **analytical tool** into a **predictive system** that can:
+
+- Estimate property prices
+- Identify mispriced transactions
+- Provide deeper data-driven insights
+
+### Key Focus Areas
+
+1. **Machine Learning Foundation**
+
+   - Feature engineering
+   - Model training and evaluation
+
+2. **Predictive Capability**
+
+   - Price estimation (core objective)
+   - Model performance validation
+
+3. **Analytical Intelligence**
+   - Residual analysis
+   - Basis for anomaly detection (overpriced / underpriced)
+
+---
+
+## Execution
+
+### 🔄 Day 16 — ML Data Preparation & Feature Engineering (Planned)
+
+#### Objective
+
+Prepare a clean, model-ready dataset and engineer additional features to improve predictive performance.
+
+#### Tasks
+
+**Dataset Preparation**
+
+- Extract modeling dataset from SQLite
+- Select relevant columns:
+  - `final_price_per_sqm` (target variable)
+  - `area`, `main_area`, `net_area`
+  - `district`
+  - `building_type`
+  - `date`
+- Drop rows with missing critical values
+
+**Feature Engineering**
+
+- Convert `date` into:
+  - `transaction_year`
+  - `transaction_month`
+- Create derived features:
+  - `has_parking` (binary flag)
+  - optional: `area_ratio` (main_area / total area)
+
+**New Feature Integration (Enhancement)**
+
+- Extend ingestion / cleaning pipeline to include:
+  - `total_floors` (總樓層數)
+  - `floor_level` (移轉層次 → extract numeric level)
+  - `building_age` (derived from 建築完成年月)
+- Validate and clean these new fields:
+  - handle missing or malformed values
+  - convert to numeric where applicable
+
+**Categorical Encoding**
+
+- Apply encoding strategy:
+  - One-hot encoding for:
+    - `district`
+    - `building_type`
+- Ensure consistent feature space for modeling
+
+**Train-Test Split**
+
+- Split dataset into:
+  - training set (e.g. 80%)
+  - testing set (e.g. 20%)
+- Ensure randomness and reproducibility (set seed)
+
+**Data Validation**
+
+- Verify:
+  - no null values in model inputs
+  - reasonable feature distributions
+- Perform quick sanity checks:
+  - summary statistics
+  - correlation inspection (optional)
+
+#### Key Outcome
+
+- Clean and fully prepared **modeling dataset**
+- Additional features introduced to improve model performance
+- Dataset ready for baseline model training
+
+### 🔄 Day 17 — Baseline Model & Initial Evaluation (Planned)
+
+#### Objective
+
+Establish a baseline prediction model and evaluate its performance to set a benchmark for further improvements.
+
+#### Tasks
+
+**Baseline Model — Linear Regression**
+
+- Train a simple Linear Regression model using:
+  - all engineered features from Day 16
+- Ensure proper pipeline:
+  - fit on training data only
+  - apply to test data
+
+**Prediction & Evaluation**
+
+- Generate predictions on test set
+- Evaluate model using:
+  - RMSE (Root Mean Squared Error)
+  - MAE (Mean Absolute Error)
+
+**Performance Interpretation**
+
+- Assess:
+  - overall prediction accuracy
+  - magnitude of typical error
+- Compare predicted vs actual values:
+  - scatter plot (actual vs predicted)
+  - identify general fit quality
+
+**Residual Analysis**
+
+- Compute residuals:
+  - `residual = actual - predicted`
+- Analyze distribution of residuals:
+  - histogram
+  - check for bias (systematic over/under prediction)
+
+**Initial Insights**
+
+- Identify:
+  - segments where model performs poorly
+    - certain districts
+    - large properties
+- Observe potential patterns in errors
+
+**Baseline Documentation**
+
+- Record:
+  - model assumptions
+  - feature set used
+  - evaluation metrics
+- Establish this model as a **benchmark for improvement (Day 18+)**
+
+#### Key Outcome
+
+- Working **baseline prediction model**
+- Clear understanding of:
+  - model performance
+  - strengths and weaknesses
+- Foundation established for:
+  - advanced models (Random Forest / XGBoost)
+  - anomaly detection (overpriced / underpriced)
+
+---
+
 # Future Work & Improvements (Post-MVP)
 
 With Phase 2 complete, the project has reached a functional and polished MVP.
