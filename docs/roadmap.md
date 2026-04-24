@@ -843,165 +843,183 @@ Introduce clear district-level rankings to help users quickly identify top and b
 
 ---
 
-### ⏳ Day 14 — Map Visualization (Geographic Insight)
+### ✅ Day 14 — Map Visualization (Geographic Insight) (Completed)
 
 #### Objective
 
 Introduce a geographic view of district-level metrics to enhance spatial understanding of pricing and transaction patterns.
 
-This builds directly on the **district aggregation layer introduced in Day 13**.
+Builds directly on the **district aggregation layer from Day 13**.
 
----
+#### Completed
 
-#### Tasks
+**Reuse of District Aggregation Layer**
 
-**Reuse District Aggregation Layer (From Day 13)**
-
-- Reuse existing district-level aggregation output:
-  - average price per sqm
-  - median price per sqm
-  - transaction volume
-- Ensure consistency between:
-  - ranking values (Day 13)
-  - map values (Day 14)
-
-**GeoJSON Integration**
-
-- Source Taiwan district-level GeoJSON dataset
-- Map dataset districts to `district` field:
-  - Handle naming mismatches (if any)
-- Validate:
-  - All districts correctly matched
-  - No missing or misaligned regions
-
-**Choropleth Map (MVP)**
-
-- Implement district-level choropleth map using:
-  - `st.pydeck_chart` or Plotly
-- Visualization logic:
-  - Color intensity represents selected metric
-- Default metric:
-  - Average price per sqm
-
-**Metric Selector (Shared Control with Ranking)**
-
-- Add metric selector for map visualization:
+- Reused district-level aggregated dataset:
   - Average price per sqm
   - Median price per sqm
   - Transaction volume
-- Ensure consistency with Day 13 ranking metric selection logic
+- Ensured full consistency between:
+  - Ranking values (Day 13)
+  - Map visualization values (Day 14)
+- Maintained single source of truth for district metrics
+
+**GeoJSON Integration**
+
+- Sourced Taiwan district-level GeoJSON dataset
+- Mapped GeoJSON regions to dataset `district` field
+- Handled naming alignment between:
+  - GeoJSON regions
+  - Transaction dataset districts
+- Validated:
+  - All districts correctly matched
+  - No missing or misaligned regions in final map
+
+**Choropleth Map Implementation**
+
+- Implemented district-level choropleth map on Overview page
+- Color encoding:
+  - Intensity represents selected metric value
+- Default metric:
+  - Average price per sqm
+- Ensured map updates dynamically based on:
+  - active filters
+  - selected metric
+
+**Metric Selector (Shared with Ranking Logic)**
+
+- Added metric selector for map:
+  - Average price per sqm
+  - Median price per sqm
+  - Transaction volume
+- Reused same selection logic as Day 13 ranking
+- Ensured consistent formatting and behavior across metrics
 
 **Tooltip & Interactivity**
 
-- Add hover tooltip showing:
+- Implemented hover tooltip displaying:
   - District name
   - Selected metric value
-  - Transaction volume (optional secondary metric)
+  - Transaction volume
+- Improved readability:
+  - Applied number formatting (commas / currency where applicable)
+- Ensured tooltip reflects current metric selection dynamically
 
-**Integration with Dashboard**
+**Integration with Overview Page**
 
-- Place map in **Overview page**
-- Ensure:
-  - Clear visual hierarchy (map as high-level insight layer)
-  - No duplication with ranking view
+- Integrated map into Overview page as a high-level insight component
+- Positioned map to support:
+  - quick spatial understanding before deeper analysis
+- Ensured no duplication with:
+  - District Analysis ranking view
 
-**Validation & Edge Cases**
+**Validation & Edge Case Handling**
 
-- Handle:
-  - Missing or unmatched GeoJSON regions
-  - Empty filtered dataset
-- Ensure graceful fallback UI when no data is available
+- Handled:
+  - empty filtered dataset (graceful fallback UI)
+  - potential GeoJSON mismatches
+- Verified stability across:
+  - different filter combinations
+  - metric selections
+- Ensured no regression in:
+  - filtering logic
+  - aggregation consistency
 
----
+#### Key Outcome
 
-#### Expected Outcome
-
-- Users gain **spatial understanding of housing market distribution**
+- Users can now visually explore **spatial distribution of housing metrics**
 - Enables:
-  - Quick identification of high/low value regions
-  - Visual validation of ranking results from Day 13
-- Establishes foundation for future spatial analytics (heatmaps, clustering, etc.)
+  - Immediate identification of high / low value regions
+  - Geographic validation of district rankings (Day 13)
+- Adds a critical **geographic dimension** to the dashboard
+- Establishes a strong foundation for future spatial enhancements
+  - heatmaps
+  - clustering
+  - transaction-level mapping
 
 ---
 
-### ⏳ Day 15 — Ranking & Map Enhancements (UX Refinement & Product Polish)
+### ⏳ Day 15 — Final Dashboard Polish (UX & Consistency)
 
 #### Objective
 
-Improve usability and analytical depth of:
+Apply final usability and visual refinements to:
 
 - District ranking system (Day 13)
 - Map visualization (Day 14)
 
-Focus is on **user control, interpretability, and analytical flexibility**, rather than new features.
+Focus is on **clarity, consistency, and user experience**, not adding new complex features.
+
+This serves as the **final polish for the Phase 2 MVP**.
 
 #### Tasks
 
-**Top N / Bottom N Toggle**
+**Ranking Usability Improvements**
 
-- Add control to filter ranking results:
-  - Top N districts (e.g. top 5 / top 10)
-  - Bottom N districts
-  - Full list toggle
-- Ensure ranking dynamically updates based on selection
-- Improve focus by reducing visual noise in large district lists
+- Improve readability of ranking table / chart:
+  - Ensure clear column labeling
+  - Align numeric formatting (commas, currency where applicable)
+- Highlight selected metric more clearly
+- Ensure consistent sorting behavior across all metrics
 
-**Sorting Controls**
+**Map Visual Clarity Improvements**
 
-- Add explicit sorting options:
-  - Ascending / descending toggle
-- Allow user control over ranking direction per metric
-- Ensure consistency across:
-  - average price per sqm
-  - median price per sqm
-  - transaction volume
+- Refine choropleth color scale:
+  - Improve contrast between districts
+  - Reduce visual skew from extreme values
+- Improve legend readability:
+  - Clear labeling of metric range
+  - More intuitive interpretation of color intensity
 
-**Ranking Readability Improvements**
+**Tooltip Enhancement (Map + Ranking Alignment)**
 
-- Improve table/bar chart clarity:
-  - Better spacing and alignment
-  - Highlight selected metric column
-- Optional:
-  - Subtle emphasis for top-ranked districts
+- Standardize tooltip format:
+  - District name
+  - Selected metric value (formatted with commas / currency)
+  - Transaction volume
+- Ensure consistency between:
+  - map tooltip
+  - ranking displayed values
+- Keep tooltip concise and easy to scan
 
-**Metric Visual Clarity Improvements**
+**Metric Consistency Across Components**
 
-- Improve color scaling for choropleth map:
-  - Reduce skew from extreme values
-  - Improve contrast between mid-tier districts
+- Ensure map and ranking:
+  - Use identical metric definitions
+  - Use identical formatting
+- Verify both components update consistently with:
+  - filter changes
+  - metric selection
+- Eliminate any discrepancies between:
+  - ranking values
+  - map values
 
-**Tooltip Enrichment**
+**UX Consistency & Layout Polish**
 
-- Enhance hover tooltip:
-  - Add ranking position (if available)
-  - Improve formatting of metric values (e.g. thousands separators)
+- Ensure consistent spacing and alignment across:
+  - Overview page (map)
+  - District Analysis page (ranking)
+- Validate logical flow:
+  - Overview → spatial insight
+  - District Analysis → detailed comparison
+- Remove any redundant or cluttered UI elements
 
-**Legend & Interpretability**
-
-- Improve map legend clarity:
-  - Better labeling of metric scale
-  - More intuitive color interpretation
-
-**UX Consistency Improvements**
-
-- Ensure ranking and map share:
-  - Same metric selector logic
-  - Same data source (single aggregation layer)
-- Align visual language across both components
-
-**Validation & Stability**
+**Edge Case & Stability Validation**
 
 - Test across:
-  - extreme filter conditions (very few districts)
-  - full dataset view
-  - comparison between ranking vs map consistency
+  - very small datasets (few districts)
+  - full dataset (all districts)
+  - extreme filter ranges
+- Ensure:
+  - graceful handling of empty states
+  - no broken visuals or misleading displays
 
 #### Expected Outcome
 
-- Ranking becomes **more focused and readable**
-- Map becomes **more interpretable and decision-friendly**
-- Both views work together as a unified spatial + analytical system
-- Dashboard moves closer to a **polished analytical product (not just a prototype)**
+- Ranking is **clean, readable, and easy to interpret**
+- Map is **visually intuitive and informative**
+- Both components work together as a **cohesive analytical system**
+- Dashboard achieves a **polished MVP standard**
 
 ---
 
@@ -1067,32 +1085,125 @@ A **functional analytical product MVP** that goes beyond visualization and suppo
 
 # Future Work & Improvements (Post-MVP)
 
-## Advanced Analytics
+With Phase 2 complete, the project has reached a functional and polished MVP.
 
-- Price growth analysis (month-over-month, year-over-year)
-- District segmentation (high-end vs affordable areas)
-- Volatility / stability indicators
-- Outlier detection (overpriced / underpriced transactions)
+Future work will focus on expanding:
 
-## Enhanced Map Features
+- analytical depth
+- data coverage
+- user experience
+- product readiness
+
+---
+
+## 1. Dashboard & UX Enhancements
+
+### Ranking Improvements
+
+- Top N / Bottom N toggle for district ranking
+- Sorting controls:
+  - ascending / descending toggle
+- Optional highlighting:
+  - emphasize top-performing districts
+- Improve ranking readability for large district lists
+
+### Map Enhancements
 
 - Transaction-level map (point-based visualization)
-- Heatmaps for price and volume
-- Geographic clustering
+- Heatmaps:
+  - price intensity
+  - transaction volume density
+- Geographic clustering of transactions
+- Drill-down capability:
+  - click district → view detailed breakdown
 
-## User Experience Improvements
+### New Visualizations
+
+- Price growth charts:
+  - month-over-month (MoM)
+  - year-over-year (YoY)
+- Volatility indicators:
+  - price stability / variance by district
+- Distribution comparisons:
+  - side-by-side district boxplots
+- Outlier detection visuals:
+  - highlight overpriced / underpriced transactions
+
+### UX & Interaction Improvements
 
 - KPI cards with trend indicators (↑ ↓)
-- Better layout and visual polish
-- Improved loading performance
+- Improved layout and visual hierarchy
+- Better loading and performance optimization
+- Enhanced filter UX (e.g. presets, quick selections)
 
-## Additional User Segments
+---
+
+## 2. Advanced Analytics
+
+- District segmentation:
+  - high-end vs mid-tier vs affordable areas
+- Price momentum analysis:
+  - identifying fast-growing districts
+- Comparative analysis:
+  - benchmark districts against each other
+- Anomaly detection:
+  - identify unusual or inconsistent transactions
+
+---
+
+## 3. Data & Model Expansion
+
+### Data Enrichment
+
+- Integrate external datasets:
+  - MRT / transport proximity
+  - demographics
+  - amenities (schools, malls, etc.)
+- Enhance spatial context for deeper analysis
+
+### Data Model Expansion
+
+Current dataset is scoped to **housing transactions only**.
+
+Future expansion may include:
+
+- housing
+- land
+- parking
+
+#### Challenges
+
+- Different transaction types require different metrics:
+  - housing → price per sqm
+  - land → price per land area
+  - parking → price per unit
+- Current pricing logic is not directly transferable
+
+#### Potential Approaches
+
+- Split dataset by transaction type
+- Introduce normalized schema
+- Build type-specific analytical views
+
+---
+
+## 4. Productization & Deployment
+
+- Deploy dashboard (e.g. Streamlit Cloud)
+- Add user documentation / usage guide
+- Improve README for portfolio presentation
+- Optimize performance and data loading
+- Prepare project for real-world usage and sharing
+
+---
+
+## 5. Future User Segments
 
 ### Property Buyers
 
 - affordability insights
 - recent comparable transactions
-- price trends by area
+- localized price trends
 
 ### Investors
 
@@ -1102,53 +1213,8 @@ A **functional analytical product MVP** that goes beyond visualization and suppo
 
 ### Analysts / Developers
 
-- deeper statistical analysis
-- clustering and segmentation
+- deeper statistical tools
+- clustering and segmentation models
 - long-term trend analysis
 
-## Productization
-
-- Deploy dashboard (Streamlit Cloud or similar)
-- Add documentation and usage guide
-- Improve README for portfolio presentation
-
-## Data Expansion
-
-- Incorporate external data:
-  - transport (MRT proximity)
-  - demographics
-  - amenities
-- Extend beyond housing-only dataset
-
-## Data Model Expansion (Future Phase)
-
-Current dataset is scoped to **housing transactions only** for consistency.
-
-Future expansion may include handling multiple transaction types:
-
-- housing
-- land
-- parking
-
-### Challenges
-
-- Each type requires different metrics:
-
-  - housing → price per sqm
-  - land → price per land area
-  - parking → price per unit
-
-- Current pricing logic is **not directly transferable**
-
-### Potential Approaches
-
-- Split dataset by transaction type
-- Introduce normalized schema
-- Build type-specific analytical views
-
-### Implication
-
-- Requires redesign of:
-  - data pipeline
-  - pricing logic
-  - dashboard UX
+---
