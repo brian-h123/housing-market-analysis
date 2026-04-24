@@ -1,3 +1,5 @@
+from .metrics import METRIC_CONFIG
+
 METRIC_MAP = {
     'Average Price per SQM': 'avg_price_per_sqm',
     'Median Price per SQM': 'median_price_per_sqm',
@@ -20,9 +22,8 @@ def get_district_aggregation(df):
     return agg_df
 
 def rank_districts(agg_df, metric_key):
-    metric_col = METRIC_MAP[metric_key]
 
     return (
-        agg_df.sort_values(by=metric_col, ascending=False)
+        agg_df.sort_values(by=metric_key, ascending=False)
         .reset_index(drop=True)
     )

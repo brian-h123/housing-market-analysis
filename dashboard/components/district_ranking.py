@@ -3,9 +3,9 @@ import plotly.express as px
 
 from utils.aggregation import (
     get_district_aggregation,
-    rank_districts,
-    METRIC_MAP
+    rank_districts
 )
+from utils.metrics import METRIC_CONFIG
 
 def render_district_ranking(df):
     st.subheader("📊 District Ranking")
@@ -13,7 +13,8 @@ def render_district_ranking(df):
     # Metric selector
     metric_key = st.selectbox(
         "Ranking Metric",
-        list(METRIC_MAP.keys())
+        options=list(METRIC_CONFIG.keys()),
+        format_func=lambda x: METRIC_CONFIG[x]['label']
     )
 
     if df.empty:
@@ -24,17 +25,32 @@ def render_district_ranking(df):
     agg_df = get_district_aggregation(df)
     ranked_df = rank_districts(agg_df, metric_key)
 
-    metric_col = METRIC_MAP[metric_key]
+    formatter = METRIC_CONFIG[metric_key]['format']
+    metric_label = METRIC_CONFIG[metric_key]['label']
+
+    ranked_df['selected_metric'] = ranked_df[metric_key].apply(formatter)
 
     # Chart
     fig = px.bar(
         ranked_df,
-        x=metric_col,
+        x=metric_key,
         y='district',
         orientation='h',
-        title=f"District Ranking by {metric_key}"
+        title=f"District Ranking by {metric_label}",
+        hover_name='district',
+        custom_data=['selected_metric'],
+        labels={metric_key: metric_label}
     )
 
-    fig.update_layout(yaxis=dict(autorange="reversed"))
+    fig.update_layout(
+        yaxis=dict(autorange="reversed"),
+        yaxis_title='District'
+    )
+
+    fig.update_traces(
+        hovertemplate=
+        "<b>%{hovertext}</b><br>" +
+        f"{metric_label}: " + "%{customdata[0]}<br>"
+    )
 
     st.plotly_chart(fig, use_container_width=True)

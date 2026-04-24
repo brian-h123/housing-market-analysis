@@ -6,8 +6,8 @@ from utils.ui_helpers import guard_page_data
 from components.filters_ui import render_filter_sidebar, render_filter_summary
 from components.metrics import render_metrics
 from components.sections import (
-    render_quick_insight,
-    render_quick_trend
+    render_quick_trend,
+    render_market_activity_overview
 )
 from components.map import render_map
 from controllers.filter_controller import apply_filter_pipeline
@@ -47,4 +47,4 @@ def app():
     render_quick_trend(filtered_df)
 
     # Quick Insight
-    render_quick_insight(filtered_df)
+    render_market_activity_overview(filtered_df)

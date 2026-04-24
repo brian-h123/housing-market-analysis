@@ -4,7 +4,7 @@ from utils.db import load_data
 from utils.ui_helpers import guard_page_data
 
 from components.filters_ui import render_filter_sidebar, render_filter_summary
-from components.sections import render_comparison_section
+from components.sections import render_market_activity_overview
 from components.district_ranking import render_district_ranking
 from controllers.filter_controller import apply_filter_pipeline
 
@@ -48,5 +48,5 @@ def app():
         comparison_mode=comparison_mode
     )
     
-    render_comparison_section(filtered_df)
+    render_market_activity_overview(filtered_df)
     render_district_ranking(filtered_df)

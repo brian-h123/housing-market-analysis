@@ -1,4 +1,5 @@
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MaxNLocator, FuncFormatter
+from utils.metrics import format_billions
 import matplotlib.pyplot as plt
 
 plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']  # for Traditional Chinese
@@ -13,19 +14,23 @@ def plot_price_distribution(df):
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     return fig
 
-def plot_district_comparison(df):
-    district_stats = df.groupby('district').agg(
-        avg_price_per_sqm = ('final_price_per_sqm', 'mean'),
-        volume = ('district', 'count')
-    ).sort_values(by='avg_price_per_sqm', ascending=True)
+def plot_district_transaction_value(df):
+    district_value = df.groupby('district').agg(
+        total_value=('price', 'sum'),
+        volume=('district', 'count')
+    ).sort_values(by='total_value', ascending=True)
+
     fig, ax = plt.subplots()
-    #district_avg.plot(kind='barh', ax=ax)
-    district_stats['avg_price_per_sqm'].plot(kind='barh', ax=ax)
-    for i, v in enumerate(district_stats['avg_price_per_sqm']):
-        ax.text(v, i, f" ({district_stats['volume'].iloc[i]})")
-    ax.set_title("Average Price per sqm by District")
-    ax.set_xlabel("Price per sqm")
-    ax.set_ylabel("Districts")
+    district_value['total_value'].plot(kind='barh', ax=ax)
+
+    for i, v in enumerate(district_value['total_value']):
+        ax.text(v, i, f" ({district_value['volume'].iloc[i]:,} txns)")
+
+    ax.set_title("Total Transaction Value by District")
+    ax.set_xlabel('Total Transaction Value (Billions)')
+    ax.set_ylabel("District")
+    ax.xaxis.set_major_formatter(FuncFormatter(format_billions))
+    ax.set_xlim(0, district_value['total_value'].max() * 1.15)
     return fig
 
 def plot_price_trend_allinone(df):

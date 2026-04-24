@@ -1,7 +1,8 @@
 import streamlit as st
 import plotly.express as px
-from utils.aggregation import get_district_aggregation, METRIC_MAP
+from utils.aggregation import get_district_aggregation
 from utils.geo import load_geojson
+from utils.metrics import METRIC_CONFIG
 
 def filter_geojson_taipei(geojson):
     filtered_features = [
@@ -35,47 +36,28 @@ def render_map(df):
 
     metric_key = st.selectbox(
         'Select Metric',
-        list(METRIC_MAP.keys())
+        options=list(METRIC_CONFIG.keys()),
+        format_func=lambda x: METRIC_CONFIG[x]['label']
     )
 
-    metric_col = METRIC_MAP[metric_key]
+    formatter = METRIC_CONFIG[metric_key]['format']
+    metric_label = METRIC_CONFIG[metric_key]['label']
 
-    if metric_key != 'transaction_volume':
-        agg_df['selected_metric'] = agg_df[metric_col].apply(
-            lambda x: f"{x:,.0f} TWD"
-        )
-    else:
-        agg_df['selected_metric'] = agg_df[metric_col].apply(
-            lambda x: f"{x:,}"
-        )
+    agg_df['selected_metric'] = agg_df[metric_key].apply(formatter)
 
-    agg_df['transaction_display'] = agg_df['transaction_volume'].apply(
-        lambda x: f"{x:,}"
-    )
+    volume_formatter = METRIC_CONFIG['transaction_volume']['format']
+    agg_df['transaction_display'] = agg_df['transaction_volume'].apply(volume_formatter)
 
     fig = px.choropleth(
         agg_df,
         geojson=geojson,
         locations='district_normalized',
         featureidkey='properties.TOWNNAME',
-        color=metric_col,
+        color=metric_key,
         hover_name='district',
-        hover_data={
-            'selected_metric': True,
-            'transaction_display': True,
-            metric_col: False,
-            'transaction_volume': False,
-            'district_normalized': False,
-            'avg_price_per_sqm': False,
-            'median_price_per_sqm':False
-        },
-        labels={
-            metric_col: metric_key,
-            'selected_metric': metric_key,
-            'transaction_volume': 'Transaction Volume',
-            'transaction_display': 'Transaction Volume'
-        },
-        color_continuous_scale='Blues'
+        custom_data=['selected_metric', 'transaction_display'],
+        color_continuous_scale='YlOrRd',
+        labels={metric_key: metric_label}
     )
 
     fig.update_geos(
@@ -83,6 +65,12 @@ def render_map(df):
         visible=False
     )
 
-    fig.update_traces(marker_line_width=0.5)
+    fig.update_traces(
+        marker_line_width=0.5,
+        hovertemplate=
+        "<b>%{hovertext}</b><br>" +
+        f"{metric_label}: " + "%{customdata[0]}<br>" +
+        "Transaction Volume: %{customdata[1]}<extra></extra>"
+    )
 
     st.plotly_chart(fig, use_container_width=True)

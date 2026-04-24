@@ -1,7 +1,7 @@
 import streamlit as st
 from .charts import (
     plot_price_distribution,
-    plot_district_comparison,
+    plot_district_transaction_value,
     plot_price_trend_allinone,
     plot_price_trend_bylevel
 )
@@ -15,14 +15,6 @@ def render_quick_trend(df):
     fig = plot_price_trend_bylevel(df, 'Monthly')
     st.pyplot(fig)
 
-def render_quick_insight(df):
-    if handle_empty_data(df, "No data for Insight chart"):
-        return
-    
-    st.subheader("Quick District Snapshot")
-    fig = plot_district_comparison(df)
-    st.pyplot(fig)
-
 def render_distribution_section(df):
     if handle_empty_data(df, "No data for Price distribution"):
         return
@@ -32,13 +24,12 @@ def render_distribution_section(df):
     fig = plot_price_distribution(df)
     st.pyplot(fig)
 
-def render_comparison_section(df):
-    if handle_empty_data(df, "No data for District comparison"):
+def render_market_activity_overview(df):
+    if handle_empty_data(df, "No data for Market activity"):
         return
 
-    st.subheader('District Comparison')
-    st.caption("Average price per sqm by district (numbers in brackets = transaction count)")
-    fig = plot_district_comparison(df)
+    st.subheader('Market Activity Overview')
+    fig = plot_district_transaction_value(df)
     st.pyplot(fig)
 
 def render_trend_section_allinone(df):
