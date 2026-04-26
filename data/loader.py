@@ -1,8 +1,10 @@
+import os
 import sqlite3
 import pandas as pd
 
 def load_data():
-    db_path = 'data/taiwan_housing.db'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, 'taiwan_housing.db')
 
     with sqlite3.connect(db_path) as conn:
         df = pd.read_sql(
