@@ -1114,139 +1114,166 @@ Transform the dashboard from an **analytical tool** into a **predictive system**
 
 ## Execution
 
-### 🔄 Day 16 — ML Data Preparation & Feature Engineering (Planned)
+### ✅ Day 16 — ML Data Preparation & Feature Engineering (Completed)
 
 #### Objective
 
-Prepare a clean, model-ready dataset and engineer additional features to improve predictive performance.
+Prepare a clean, reusable, and model-ready dataset by refactoring the data pipeline and introducing ML-focused feature engineering.
 
-#### Tasks
+#### Completed
 
-**Dataset Preparation**
+**Data Layer Refactor**
 
-- Extract modeling dataset from SQLite
-- Select relevant columns:
-  - `final_price_per_sqm` (target variable)
-  - `area`, `main_area`, `net_area`
+- Refactored `load_data` to create a shared data access layer
+- Enabled reuse of the same dataset pipeline across:
+  - dashboard modules
+  - ML pipeline
+- Improved consistency and reduced duplication between components
+
+**Project Structure & Imports**
+
+- Configured `pyproject.toml` for clean module imports
+- Eliminated messy relative imports
+- Improved overall codebase organization and maintainability
+
+**ML Feature Engineering Pipeline**
+
+- Extended `clean_data` pipeline with `add_ml_features`
+- Integrated processing for newly introduced raw columns:
+  - `total_floors_raw`
+  - `floor_info_raw`
+  - `building_year_raw`
+
+**Building Age Processing**
+
+- Derived `building_age` from transaction date and building year
+- Identified issue with pre-sale properties:
+  - negative `building_age` values
+- Applied filtering to exclude negative values
+- Prioritized data integrity over retaining all records
+
+**Floor Information Handling**
+
+- Identified `floor_info_raw` as noisy and ambiguous
+- Simplified extraction:
+  - reduced to a single representative value (`floors[0]`)
+- Introduced `floor_level` as a feature:
+
+  - marked as optional / experimental
+  - to be used cautiously in modeling
+
+  **Categorical Encoding**
+
+- Applied one-hot encoding to:
   - `district`
   - `building_type`
-  - `date`
-- Drop rows with missing critical values
+- Ensured compatibility with ML model requirements
 
-**Feature Engineering**
+**Train-Test Split Preparation**
 
-- Convert `date` into:
-  - `transaction_year`
-  - `transaction_month`
-- Create derived features:
-  - `has_parking` (binary flag)
-  - optional: `area_ratio` (main_area / total area)
-
-**New Feature Integration (Enhancement)**
-
-- Extend ingestion / cleaning pipeline to include:
-  - `total_floors` (總樓層數)
-  - `floor_level` (移轉層次 → extract numeric level)
-  - `building_age` (derived from 建築完成年月)
-- Validate and clean these new fields:
-  - handle missing or malformed values
-  - convert to numeric where applicable
-
-**Categorical Encoding**
-
-- Apply encoding strategy:
-  - One-hot encoding for:
-    - `district`
-    - `building_type`
-- Ensure consistent feature space for modeling
-
-**Train-Test Split**
-
-- Split dataset into:
-  - training set (e.g. 80%)
-  - testing set (e.g. 20%)
-- Ensure randomness and reproducibility (set seed)
-
-**Data Validation**
-
-- Verify:
-  - no null values in model inputs
-  - reasonable feature distributions
-- Perform quick sanity checks:
-  - summary statistics
-  - correlation inspection (optional)
+- Completed preprocessing pipeline for modeling dataset
+- Performed train-test split
+- Ensured dataset is:
+  - clean
+  - numeric
+  - model-ready
 
 #### Key Outcome
 
-- Clean and fully prepared **modeling dataset**
-- Additional features introduced to improve model performance
-- Dataset ready for baseline model training
+- Established a **robust and reusable ML data pipeline**
+- Introduced **new features** to enhance predictive capability
+- Resolved key data quality issues:
+  - pre-sale building age
+  - ambiguous floor information
+- Produced a **fully prepared dataset ready for model training (Day 17)**
 
 ### 🔄 Day 17 — Baseline Model & Initial Evaluation (Planned)
 
 #### Objective
 
-Establish a baseline prediction model and evaluate its performance to set a benchmark for further improvements.
+Train a baseline prediction model using the prepared dataset and evaluate its performance to establish a benchmark for future improvements.
 
 #### Tasks
 
+**Dataset Integration**
+
+- Use `prepare_dataset()` from `data_prep.py` as the single entry point
+- Ensure dataset includes:
+  - fully engineered features
+  - encoded categorical variables
+- Define:
+  - `X` → feature set
+  - `y` → `final_price_per_sqm` (target)
+
+**Train-Test Split Usage**
+
+- Use the train-test split prepared in Day 16
+- Ensure:
+  - no data leakage between train and test sets
+  - consistent feature columns across both sets
+
 **Baseline Model — Linear Regression**
 
-- Train a simple Linear Regression model using:
-  - all engineered features from Day 16
-- Ensure proper pipeline:
-  - fit on training data only
-  - apply to test data
+- Train a Linear Regression model on training data
+- Use all available engineered features:
+  - structural features (area, floors, age)
+  - temporal features (year, month, time_index)
+  - encoded categorical features
+- Keep implementation simple and interpretable
 
 **Prediction & Evaluation**
 
-- Generate predictions on test set
-- Evaluate model using:
+- Generate predictions on the test set
+- Evaluate performance using:
   - RMSE (Root Mean Squared Error)
   - MAE (Mean Absolute Error)
-
-**Performance Interpretation**
-
-- Assess:
-  - overall prediction accuracy
-  - magnitude of typical error
-- Compare predicted vs actual values:
-  - scatter plot (actual vs predicted)
-  - identify general fit quality
+- Interpret magnitude of errors relative to price scale
 
 **Residual Analysis**
 
 - Compute residuals:
   - `residual = actual - predicted`
-- Analyze distribution of residuals:
-  - histogram
-  - check for bias (systematic over/under prediction)
+- Analyze:
+  - distribution of residuals (histogram)
+  - presence of bias (systematic over/under prediction)
 
-**Initial Insights**
+**Model Diagnostics**
 
-- Identify:
-  - segments where model performs poorly
-    - certain districts
-    - large properties
-- Observe potential patterns in errors
+- Compare predicted vs actual values:
+  - scatter plot (ideal: close to diagonal)
+- Identify patterns such as:
+  - underprediction of high-value properties
+  - overprediction of low-value properties
+
+**Feature Behavior Review**
+
+- Observe impact of newly introduced features:
+  - `building_age`
+  - `total_floors`
+  - `floor_level` (experimental)
+- Note any instability or weak signal from noisy features
 
 **Baseline Documentation**
 
 - Record:
-  - model assumptions
-  - feature set used
+  - features used
   - evaluation metrics
-- Establish this model as a **benchmark for improvement (Day 18+)**
+  - key observations from residuals and predictions
+- Establish baseline model as benchmark for:
+  - future model improvements
+  - feature selection and tuning (Day 18+)
 
 #### Key Outcome
 
-- Working **baseline prediction model**
+- Working **baseline prediction model** established
 - Clear understanding of:
   - model performance
-  - strengths and weaknesses
-- Foundation established for:
-  - advanced models (Random Forest / XGBoost)
-  - anomaly detection (overpriced / underpriced)
+  - error characteristics
+  - feature effectiveness
+- Strong foundation for:
+  - model improvement
+  - feature refinement
+  - anomaly detection (overpriced / underpriced transactions)
 
 ---
 
