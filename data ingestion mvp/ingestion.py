@@ -71,13 +71,16 @@ def clean_data(df):
         '單價元平方公尺',
         '建物型態',
         '鄉鎮市區',
-        '交易標的'
-    ]
-
-    EXTRA_COLUMNS = [
+        '交易標的',
         '車位總價元',
         '車位移轉總面積平方公尺',
         '主建物面積'
+    ]
+
+    EXTRA_COLUMNS = [
+        '總樓層數',
+        '移轉層次',
+        '建築完成年月'
     ]
 
     df = df[BASE_COLUMNS + EXTRA_COLUMNS]
@@ -93,7 +96,10 @@ def clean_data(df):
         "交易標的": "transaction_type",
         "車位總價元": "parking_price",
         "車位移轉總面積平方公尺": "parking_area",
-        "主建物面積": "main_area"
+        "主建物面積": "main_area",
+        '總樓層數': 'total_floors_raw',
+        '移轉層次': 'floor_info_raw',
+        '建築完成年月': 'building_year_raw'
     })
 
     # Strip whitespace
@@ -188,12 +194,12 @@ def clean_data(df):
 # ---------------------
 import sqlite3
 
-def save_to_sqlite(cleaned_df, db_path = 'data/taiwan_housing.db'):
+def save_to_sqlite(cleaned_df, db_path = '../data/taiwan_housing.db'):
     with sqlite3.connect(db_path) as conn:
         cleaned_df.to_sql(
             'transactions',
             conn,
-            if_exists='append',
+            if_exists='replace',
             index=False
         )
 

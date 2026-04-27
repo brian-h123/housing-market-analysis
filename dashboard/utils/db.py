@@ -1,21 +1,21 @@
-from pathlib import Path
-import sqlite3
-import pandas as pd
 import streamlit as st
+from data.loader import load_data as base_load_data
+
+DASHBOARD_COLUMNS = [
+    'date',
+    'district',
+    'price',
+    'area',
+    'final_price_per_sqm',
+    'building_type',
+    'address'
+]
 
 @st.cache_data(ttl=600)
 def load_data():
-    db_path = Path(__file__).resolve().parents[2] / "data" / "taiwan_housing.db"
-    
-    if not db_path.exists():
-        raise FileNotFoundError(f"Database not found at {db_path}")
+    df = base_load_data()
 
-    with sqlite3.connect(db_path) as conn:
-        df = pd.read_sql(
-            "SELECT * FROM transactions",
-            conn,
-            parse_dates=['date']
-        )
+    df = df[DASHBOARD_COLUMNS]
 
     # Development Check (remove before production)
     assert df['final_price_per_sqm'].notna().all()
