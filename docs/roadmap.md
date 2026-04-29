@@ -1250,87 +1250,502 @@ Train a baseline prediction model using the prepared dataset and evaluate its pe
   - benchmark for future models
   - foundation for further optimization (Day 18+)
 
-### 🔄 Day 18 — Model Experimentation & Performance Comparison (Planned)
+### ✅ Day 18 — Model Experimentation & Performance Comparison (Completed)
 
 #### Objective
 
 Explore advanced machine learning models and compare their performance against the baseline to identify a stronger predictive approach.
 
-#### Tasks
+#### Completed
 
-**Evaluation Framework Setup**
+**Model Experimentation**
 
-- Reuse consistent train-test split from Day 17
-- Ensure no data leakage between training and testing
-- Standardize evaluation metrics:
-  - RMSE (Root Mean Squared Error)
-  - MAE (Mean Absolute Error)
-- Prepare a structured comparison table for all models
-
-**Regularized Linear Models (Validation Step)**
-
-- Train:
+- Trained multiple models using the same **baseline_v2 feature set** for fair comparison:
   - Ridge Regression
   - Lasso Regression
-- Apply feature scaling where required (model-specific, not in `data_prep.py`)
-- Compare against baseline Linear Regression (v2)
-- Assess:
-  - performance improvement (if any)
-  - coefficient stability
-  - impact on multicollinearity
-
-**Tree-Based Models (Core Focus)**
-
-- Train non-linear models:
   - Random Forest Regressor
   - XGBoost Regressor
-- Use same feature set for fair comparison
-- Evaluate:
-  - RMSE / MAE on test set
-  - overfitting (train vs test performance gap)
+- Ensured consistent:
+  - train-test split
+  - evaluation metrics (RMSE, MAE)
 
-**Light Hyperparameter Tuning**
+**Regularized Linear Models**
 
-- Perform controlled tuning (no exhaustive search)
-- Focus on XGBoost:
-  - `n_estimators`
-  - `max_depth`
-  - `learning_rate`
-- Test a small number of configurations
-- Observe performance changes and sensitivity
+- Applied **Ridge** and **Lasso Regression**:
+  - Helped address multicollinearity identified in Day 17
+  - Improved coefficient stability
+- Observed that:
+  - **Ridge Regression achieved the best performance overall**
+  - Lasso performed slightly worse, likely due to aggressive feature shrinking
+
+**Tree-Based Models**
+
+- Trained **Random Forest** and **XGBoost** models:
+  - Tested ability to capture non-linear relationships
+- Performed light hyperparameter tuning on XGBoost:
+  - Adjusted `n_estimators`, `max_depth`, `learning_rate`
+- Observed that:
+  - Tree-based models did **not outperform linear models**
+  - Limited gains despite tuning efforts
 
 **Model Comparison & Analysis**
 
-- Compile results into a structured comparison:
+- Compared all models using RMSE and MAE
+- Key findings:
+  - Ridge Regression outperformed all other models
+  - Minimal improvement from non-linear models
+  - No strong evidence of complex non-linear patterns in current feature set
 
-  | Model                  | RMSE | MAE | Notes |
-  | ---------------------- | ---- | --- | ----- |
-  | Linear Regression (v2) |      |     |       |
-  | Ridge                  |      |     |       |
-  | Lasso                  |      |     |       |
-  | Random Forest          |      |     |       |
-  | XGBoost                |      |     |       |
+**Key Insight: Data & Feature Behavior**
 
-- Analyze:
-  - performance differences between linear vs non-linear models
-  - presence of overfitting
-  - magnitude of improvement vs baseline
-- Identify the strongest candidate model for next phase
+- The dataset and engineered features exhibit a **strong linear signal**
+- Price is largely explained by:
+  - location (district encoding)
+  - area-related features
+- Limited feature interactions or non-linear relationships present
+- As a result:
+  - Linear models generalize better
+  - More complex models (tree-based) offer little advantage
 
 **Pipeline Considerations**
 
-- Keep `data_prep.py` focused on feature engineering only
-- Avoid embedding scaling or model-specific transformations into data pipeline
-- Defer full sklearn Pipeline integration to later phase
+- Maintained clean separation:
+  - `data_prep.py` → feature engineering only
+  - modeling logic handled externally
+- Avoided introducing model-specific transformations into the core pipeline
 
 #### Key Outcome
 
-- Identified a **stronger predictive model** beyond baseline
-- Established clear **performance comparison across model types**
-- Gained understanding of:
-  - linear vs non-linear modeling tradeoffs
-  - sensitivity to hyperparameters
-- Selected a **candidate model for further optimization (Day 19+)**
+- Identified **Ridge Regression as the strongest model** for current setup
+- Established a clear **performance benchmark across model types**
+- Gained critical insight:
+  - Model performance is constrained more by **feature design** than model complexity
+- Highlighted next direction:
+  - Further improvements likely require **feature engineering (e.g. interactions, new signals)** rather than more advanced models
+
+### 🔄 Day 19 — Model Finalization & Explainability Layer (Planned)
+
+#### Objective
+
+Finalize the predictive model and build an explainability layer to translate model behavior into clear, interpretable market insights.
+
+#### Tasks
+
+**Model Finalization**
+
+- Select **Ridge Regression** as the primary model:
+  - Best performance from Day 18
+  - Stable and interpretable
+- Optionally retain XGBoost as a secondary benchmark (no further tuning)
+- Freeze:
+  - feature set (baseline_v2)
+  - train-test split
+- Ensure reproducibility of results
+
+**Feature Importance Analysis**
+
+- Extract Ridge model coefficients
+- Analyze impact of key features:
+  - district (location premium)
+  - area / log_area (size effect)
+  - building_age (depreciation)
+  - floor_level / total_floors (structural factors)
+- Identify:
+  - strongest positive contributors
+  - strongest negative contributors
+- Validate findings against real-world intuition
+
+**Market Logic Interpretation (Core Deliverable)**
+
+- Translate coefficients into human-readable insights:
+
+  Examples:
+
+  - “District X adds +Y per sqm relative to baseline”
+  - “Each additional year of building age reduces price by Z%”
+  - “Larger properties show diminishing returns (log_area effect)”
+
+- Focus on clarity and interpretability (not technical detail)
+
+**Explainability Artifacts**
+
+- Create:
+  - coefficient bar chart (feature importance visualization)
+  - ranked feature importance table
+- Ensure outputs are:
+  - clean
+  - labeled clearly
+  - ready for dashboard integration
+
+**Pipeline Considerations**
+
+- Do NOT modify `data_prep.py`
+- Keep explainability logic separate from core pipeline
+- Ensure compatibility with future dashboard integration
+
+#### Key Outcome
+
+- Finalized a **production-ready model (Ridge Regression)**
+- Built a clear **interpretability layer** for model outputs
+- Transformed model behavior into **explainable market logic**
+- Established foundation for:
+  - anomaly detection (Day 20)
+  - insight generation (Day 21)
+
+---
+
+### 🔄 Day 20 — Anomaly Detection & Market Signal Extraction (Planned)
+
+#### Objective
+
+Leverage model residuals to identify mispriced transactions and uncover non-obvious market signals.
+
+#### Tasks
+
+**Residual Computation**
+
+- Compute prediction residuals:
+
+  - `residual = actual_price - predicted_price`
+
+- Add residuals to dataset
+- Validate:
+  - distribution of residuals
+  - presence of extreme values
+
+**Overpriced / Underpriced Detection**
+
+- Identify:
+  - Top positive residuals → **overpriced properties**
+  - Top negative residuals → **undervalued properties**
+- Create ranked tables:
+  - Top N overpriced transactions
+  - Top N undervalued transactions
+- Include key fields:
+  - district
+  - price
+  - predicted price
+  - residual
+
+**Z-Score Based Anomaly Detection**
+
+- Standardize residuals using Z-score:
+
+  - detect extreme deviations from mean
+
+- Define thresholds:
+  - e.g. |Z| > 2 or 3 → anomaly
+- Label transactions:
+  - normal
+  - moderately anomalous
+  - highly anomalous
+
+**Market Surprise Index (Advanced Signal)**
+
+- Construct composite anomaly score based on:
+  - residual magnitude
+  - normalized within district
+- Purpose:
+  - avoid bias toward high-price districts
+  - highlight truly unusual transactions
+
+**District-Level Anomaly Insights**
+
+- Aggregate residuals at district level:
+  - mean residual → systematic over/underpricing
+  - variance → market volatility
+- Identify:
+  - districts consistently overpriced
+  - districts consistently undervalued
+  - high-variance (unstable) markets
+
+**Output Preparation**
+
+- Prepare clean outputs for dashboard:
+  - anomaly tables
+  - summary metrics
+  - labeled dataset with anomaly flags
+
+#### Key Outcome
+
+- Built a **residual-based anomaly detection system**
+- Identified:
+  - overpriced properties
+  - undervalued opportunities
+- Introduced **market signal layer** beyond raw predictions
+- Created foundation for:
+  - insight storytelling (Day 21)
+  - dashboard intelligence features
+
+### 🔄 Day 21 — Insight Engine & Storytelling Layer (Planned)
+
+#### Objective
+
+Transform model outputs and anomaly signals into clear, structured insights that provide meaningful interpretation of the housing market.
+
+#### Tasks
+
+**Insight Structuring**
+
+- Define key categories of insights:
+  - pricing behavior (from Ridge model)
+  - anomalies (from residual analysis)
+  - district-level patterns
+- Ensure insights are:
+  - concise
+  - interpretable
+  - non-technical
+
+**District Insight Generation**
+
+- Create district-level summaries based on:
+  - average residual (over/underpricing trend)
+  - residual variance (market stability)
+- Identify and label:
+  - **Most overpriced districts**
+  - **Most undervalued districts**
+  - **Most volatile districts**
+- Rank districts across these dimensions
+
+**Market Narratives (Core Deliverable)**
+
+- Translate quantitative findings into narrative statements:
+
+  Examples:
+
+  - “District A shows consistent overpricing relative to model predictions”
+  - “District B exhibits high volatility, indicating speculative activity”
+  - “District C remains stable and aligned with expected pricing”
+
+- Focus on:
+  - clarity
+  - actionable interpretation
+  - real-world relevance
+
+**Transaction-Level Insights**
+
+- Generate insights for individual anomalies:
+  - highlight top overpriced / undervalued properties
+- Add contextual explanation:
+  - “This property is priced X% above expected value”
+- Ensure explanations are understandable without ML knowledge
+
+**Trend Interpretation Layer**
+
+- Extend existing trend charts with interpretation:
+  - not just “what is happening”
+  - but “what it means”
+- Example:
+  - “Recent upward trend suggests increasing demand in selected districts”
+
+**Output Preparation**
+
+- Prepare structured outputs for dashboard integration:
+  - district insight tables
+  - narrative text blocks
+  - labeled insights (tags / categories)
+
+#### Key Outcome
+
+- Built an **insight engine** that translates data into meaning
+- Converted model + anomaly outputs into:
+  - **clear narratives**
+  - **decision-oriented insights**
+- Elevated project from:
+  - predictive model → **analytical intelligence system**
+- Established foundation for:
+  - dashboard integration (Day 22)
+
+---
+
+### 🔄 Day 22 — Dashboard Integration & ML Intelligence Layer (Planned)
+
+#### Objective
+
+Integrate predictive modeling, anomaly detection, and insights into the Streamlit dashboard to create an intelligent, user-facing analytical product.
+
+#### Tasks
+
+**Prediction Module**
+
+- Add prediction capability to dashboard:
+  - user selects or inputs a transaction
+  - display:
+    - predicted price per sqm
+    - actual price per sqm
+    - difference (residual)
+- Ensure:
+  - smooth interaction
+  - clear presentation of results
+
+**Anomaly View**
+
+- Create dedicated section for anomalies:
+  - Top overpriced properties
+  - Top undervalued properties
+- Display:
+  - district
+  - actual vs predicted price
+  - residual / anomaly score
+- Add sorting and filtering options
+
+**Feature Explanation Panel**
+
+- Introduce “Why this price?” section:
+  - explain prediction using model insights
+- Display:
+  - key contributing factors (from Ridge coefficients)
+  - simplified explanation:
+    - “Location contributes +X”
+    - “Building age reduces value by Y”
+- Focus on interpretability over technical detail
+
+**Insight Integration**
+
+- Embed insights from Day 21 into dashboard:
+  - district insight cards
+  - key findings summaries
+- Ensure insights are:
+  - visible
+  - easy to understand
+  - tied to user-selected filters
+
+**UI/UX Integration**
+
+- Decide placement within existing pages:
+  - Overview → high-level insights
+  - District Analysis → anomaly + district insights
+  - Data Explorer → transaction-level prediction
+- Maintain consistency with existing:
+  - layout
+  - filtering system
+  - design patterns
+
+**Performance & Stability Checks**
+
+- Ensure:
+  - no significant slowdown from ML computations
+  - caching used where appropriate
+- Validate:
+  - predictions align with backend model
+  - anomaly calculations are consistent
+
+#### Key Outcome
+
+- Transformed dashboard into an **ML-powered analytical tool**
+- Users can:
+  - see predictions
+  - identify mispriced properties
+  - understand pricing drivers
+- Integrated:
+  - model outputs
+  - anomaly detection
+  - insights
+    into a unified user experience
+- Marks transition from:
+  - dashboard → **intelligent decision-support system**
+
+### 🔄 Day 23 — Final Polish & Product Narrative (Planned)
+
+#### Objective
+
+Refine the dashboard into a cohesive, polished product by improving presentation, clarifying model decisions, and consolidating key insights into a strong final narrative.
+
+#### Tasks
+
+**Model Explanation Section**
+
+- Create a dedicated section explaining:
+  - what model is used (Ridge Regression)
+  - why it was selected:
+    - best performance from Day 18
+    - strong interpretability
+    - stability with current feature set
+- Summarize key pricing drivers:
+  - district (location premium)
+  - area (size effect)
+  - building_age (depreciation)
+- Keep explanation:
+  - concise
+  - non-technical
+  - accessible to end users
+
+**Key Insights Page (Core Deliverable)**
+
+- Compile top insights from entire project:
+  - pricing structure (from Day 19)
+  - anomaly findings (Day 20)
+  - district patterns (Day 21)
+- Present as:
+  - “Top 5 Market Insights” (or similar)
+- Ensure each insight is:
+  - clear
+  - impactful
+  - supported by data
+
+**Dashboard UX & Visual Polish**
+
+- Improve overall layout:
+  - consistent spacing and alignment
+  - clear section hierarchy
+- Standardize formatting:
+  - numbers (currency, commas)
+  - labels and titles
+- Remove:
+  - redundant elements
+  - technical/debug outputs
+- Ensure smooth navigation across pages
+
+**Clarity & Usability Improvements**
+
+- Add explanatory text where needed:
+  - clarify charts and metrics
+  - guide user interpretation
+- Ensure all components answer:
+  - “What am I looking at?”
+  - “Why does it matter?”
+
+**Consistency Validation**
+
+- Verify consistency across:
+  - filters
+  - metrics
+  - model outputs
+  - insight displays
+- Check:
+  - prediction vs anomaly alignment
+  - district insights match underlying data
+- Test edge cases:
+  - small datasets
+  - extreme filters
+  - empty states
+
+**Final Review & Cleanup**
+
+- Conduct full walkthrough of dashboard:
+  - validate user flow from Overview → Insights → Details
+- Fix:
+  - UI inconsistencies
+  - labeling issues
+  - minor bugs
+- Ensure:
+  - no broken components
+  - no confusing outputs
+
+#### Key Outcome
+
+- Delivered a **fully polished, end-to-end analytical product**
+- Clearly communicates:
+  - how the model works
+  - what drives pricing
+  - where market opportunities exist
+- Combines:
+  - data analysis
+  - machine learning
+  - insights
+    into a **cohesive user experience**
+- Marks completion of Phase 3:
+  - from predictive modeling → **decision-support system**
 
 ---
 
