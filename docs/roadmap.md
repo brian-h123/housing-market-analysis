@@ -1187,93 +1187,150 @@ Prepare a clean, reusable, and model-ready dataset by refactoring the data pipel
   - ambiguous floor information
 - Produced a **fully prepared dataset ready for model training (Day 17)**
 
-### 🔄 Day 17 — Baseline Model & Initial Evaluation (Planned)
+### ✅ Day 17 — Baseline Model & Initial Evaluation (Completed)
 
 #### Objective
 
 Train a baseline prediction model using the prepared dataset and evaluate its performance to establish a benchmark for future improvements.
 
-#### Tasks
+#### Completed
 
-**Dataset Integration**
+**Baseline Model Training**
 
-- Use `prepare_dataset()` from `data_prep.py` as the single entry point
-- Ensure dataset includes:
-  - fully engineered features
+- Trained initial Linear Regression model using full feature set
+- Utilized dataset from `prepare_dataset()` pipeline:
+  - engineered numerical features
   - encoded categorical variables
-- Define:
-  - `X` → feature set
-  - `y` → `final_price_per_sqm` (target)
+- Established a simple, interpretable starting point for modeling
 
-**Train-Test Split Usage**
+**Model Evaluation**
 
-- Use the train-test split prepared in Day 16
-- Ensure:
-  - no data leakage between train and test sets
-  - consistent feature columns across both sets
-
-**Baseline Model — Linear Regression**
-
-- Train a Linear Regression model on training data
-- Use all available engineered features:
-  - structural features (area, floors, age)
-  - temporal features (year, month, time_index)
-  - encoded categorical features
-- Keep implementation simple and interpretable
-
-**Prediction & Evaluation**
-
-- Generate predictions on the test set
-- Evaluate performance using:
+- Evaluated performance using:
   - RMSE (Root Mean Squared Error)
   - MAE (Mean Absolute Error)
-- Interpret magnitude of errors relative to price scale
+- Assessed prediction error relative to price scale
+- Established baseline metrics for future comparison
 
-**Residual Analysis**
+**Feature Importance Analysis**
 
-- Compute residuals:
-  - `residual = actual - predicted`
-- Analyze:
-  - distribution of residuals (histogram)
-  - presence of bias (systematic over/under prediction)
+- Reviewed model coefficients to understand feature influence
+- Identified:
+  - strong impact from location (district features)
+  - redundancy among area-related variables
+- Observed signs of **multicollinearity**:
+  - conflicting coefficient signs
+  - overlapping feature information
 
-**Model Diagnostics**
+**Baseline Refinement (v2)**
 
-- Compare predicted vs actual values:
-  - scatter plot (ideal: close to diagonal)
-- Identify patterns such as:
-  - underprediction of high-value properties
-  - overprediction of low-value properties
+- Performed **feature selection** to reduce redundancy:
+  - removed overlapping / less informative features
+- Introduced **feature scaling**:
+  - improved numerical stability of the model
+- Simplified feature space to improve interpretability
 
-**Feature Behavior Review**
+**Model Improvement**
 
-- Observe impact of newly introduced features:
-  - `building_age`
-  - `total_floors`
-  - `floor_level` (experimental)
-- Note any instability or weak signal from noisy features
-
-**Baseline Documentation**
-
-- Record:
-  - features used
-  - evaluation metrics
-  - key observations from residuals and predictions
-- Establish baseline model as benchmark for:
-  - future model improvements
-  - feature selection and tuning (Day 18+)
+- Trained refined baseline model (v2)
+- Achieved:
+  - reduced multicollinearity
+  - more stable and interpretable coefficients
+- Maintained or improved predictive performance with cleaner feature set
 
 #### Key Outcome
 
-- Working **baseline prediction model** established
-- Clear understanding of:
-  - model performance
-  - error characteristics
-  - feature effectiveness
-- Strong foundation for:
-  - model improvement
-  - feature refinement
-  - anomaly detection (overpriced / underpriced transactions)
+- Established a **working baseline prediction model**
+- Identified key modeling challenges:
+  - multicollinearity
+  - feature redundancy
+- Improved model quality through:
+  - feature selection
+  - scaling
+- Produced a **clean and interpretable baseline (v2)** to serve as:
+  - benchmark for future models
+  - foundation for further optimization (Day 18+)
+
+### 🔄 Day 18 — Model Experimentation & Performance Comparison (Planned)
+
+#### Objective
+
+Explore advanced machine learning models and compare their performance against the baseline to identify a stronger predictive approach.
+
+#### Tasks
+
+**Evaluation Framework Setup**
+
+- Reuse consistent train-test split from Day 17
+- Ensure no data leakage between training and testing
+- Standardize evaluation metrics:
+  - RMSE (Root Mean Squared Error)
+  - MAE (Mean Absolute Error)
+- Prepare a structured comparison table for all models
+
+**Regularized Linear Models (Validation Step)**
+
+- Train:
+  - Ridge Regression
+  - Lasso Regression
+- Apply feature scaling where required (model-specific, not in `data_prep.py`)
+- Compare against baseline Linear Regression (v2)
+- Assess:
+  - performance improvement (if any)
+  - coefficient stability
+  - impact on multicollinearity
+
+**Tree-Based Models (Core Focus)**
+
+- Train non-linear models:
+  - Random Forest Regressor
+  - XGBoost Regressor
+- Use same feature set for fair comparison
+- Evaluate:
+  - RMSE / MAE on test set
+  - overfitting (train vs test performance gap)
+
+**Light Hyperparameter Tuning**
+
+- Perform controlled tuning (no exhaustive search)
+- Focus on XGBoost:
+  - `n_estimators`
+  - `max_depth`
+  - `learning_rate`
+- Test a small number of configurations
+- Observe performance changes and sensitivity
+
+**Model Comparison & Analysis**
+
+- Compile results into a structured comparison:
+
+  | Model                  | RMSE | MAE | Notes |
+  | ---------------------- | ---- | --- | ----- |
+  | Linear Regression (v2) |      |     |       |
+  | Ridge                  |      |     |       |
+  | Lasso                  |      |     |       |
+  | Random Forest          |      |     |       |
+  | XGBoost                |      |     |       |
+
+- Analyze:
+  - performance differences between linear vs non-linear models
+  - presence of overfitting
+  - magnitude of improvement vs baseline
+- Identify the strongest candidate model for next phase
+
+**Pipeline Considerations**
+
+- Keep `data_prep.py` focused on feature engineering only
+- Avoid embedding scaling or model-specific transformations into data pipeline
+- Defer full sklearn Pipeline integration to later phase
+
+#### Key Outcome
+
+- Identified a **stronger predictive model** beyond baseline
+- Established clear **performance comparison across model types**
+- Gained understanding of:
+  - linear vs non-linear modeling tradeoffs
+  - sensitivity to hyperparameters
+- Selected a **candidate model for further optimization (Day 19+)**
 
 ---
 
