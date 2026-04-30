@@ -1323,159 +1323,145 @@ Explore advanced machine learning models and compare their performance against t
 - Highlighted next direction:
   - Further improvements likely require **feature engineering (e.g. interactions, new signals)** rather than more advanced models
 
-### 🔄 Day 19 — Model Finalization & Explainability Layer (Planned)
+### ✅ Day 19 — Model Finalization & Explainability Layer (Completed)
 
 #### Objective
 
-Finalize the predictive model and build an explainability layer to translate model behavior into clear, interpretable market insights.
+Finalize the production-ready model and build an explainability layer to interpret model behavior and feature impact.
 
-#### Tasks
+#### Completed
 
-**Model Finalization**
+**Final Model Pipeline**
 
-- Select **Ridge Regression** as the primary model:
-  - Best performance from Day 18
-  - Stable and interpretable
-- Optionally retain XGBoost as a secondary benchmark (no further tuning)
-- Freeze:
-  - feature set (baseline_v2)
-  - train-test split
-- Ensure reproducibility of results
+- Built `final_model.py` to formalize the model training workflow
+- Standardized pipeline for:
+  - loading prepared dataset
+  - training final model (Ridge Regression from Day 18)
+  - generating predictions
+- Ensured reproducibility and consistency of training process
 
-**Feature Importance Analysis**
+**Model Artifacts Creation**
 
-- Extract Ridge model coefficients
-- Analyze impact of key features:
-  - district (location premium)
-  - area / log_area (size effect)
-  - building_age (depreciation)
-  - floor_level / total_floors (structural factors)
-- Identify:
-  - strongest positive contributors
-  - strongest negative contributors
-- Validate findings against real-world intuition
+- Saved trained model as a reusable artifact
+- Exported associated feature set used during training
+- Established structure for future model deployment or reuse
 
-**Market Logic Interpretation (Core Deliverable)**
+**Model Selection Confirmation**
 
-- Translate coefficients into human-readable insights:
+- Confirmed **Ridge Regression** as final model:
+  - best balance of performance and stability
+  - handles multicollinearity effectively
+- Solidified as the production baseline model
 
-  Examples:
+**Explainability Development**
 
-  - “District X adds +Y per sqm relative to baseline”
-  - “Each additional year of building age reduces price by Z%”
-  - “Larger properties show diminishing returns (log_area effect)”
+- Created `explainability.py` for generating model interpretation artifacts
+- Implemented utilities for:
+  - formatting feature names for readability
+  - categorizing features into logical groups (e.g. location, area, structure)
 
-- Focus on clarity and interpretability (not technical detail)
+**Feature Importance Visualization**
 
-**Explainability Artifacts**
+- Extracted and analyzed model coefficients
+- Built horizontal bar chart to display **top feature importance**
+- Highlighted:
+  - strongest positive and negative drivers of price
+  - relative magnitude of feature influence
 
-- Create:
-  - coefficient bar chart (feature importance visualization)
-  - ranked feature importance table
-- Ensure outputs are:
-  - clean
-  - labeled clearly
-  - ready for dashboard integration
+**Interpretation & Analysis (Notebook)**
 
-**Pipeline Considerations**
-
-- Do NOT modify `data_prep.py`
-- Keep explainability logic separate from core pipeline
-- Ensure compatibility with future dashboard integration
+- Developed notebook for deeper explainability exploration
+- Interpreted coefficient outputs in business context:
+  - validated importance of location-related features
+  - assessed contribution of engineered variables
+- Bridged gap between model output and real-world insights
 
 #### Key Outcome
 
 - Finalized a **production-ready model (Ridge Regression)**
+- Built a clean and reproducible **training pipeline** with saved model and feature artifacts
 - Built a clear **interpretability layer** for model outputs
-- Transformed model behavior into **explainable market logic**
-- Established foundation for:
-  - anomaly detection (Day 20)
-  - insight generation (Day 21)
+- Established a clear link between **model outputs and real-world housing price drivers**
 
 ---
 
-### 🔄 Day 20 — Anomaly Detection & Market Signal Extraction (Planned)
+### 🔄 Day 20 — Anomaly Detection & Residual Analysis (Planned)
 
 #### Objective
 
-Leverage model residuals to identify mispriced transactions and uncover non-obvious market signals.
+Use model residuals to identify mispriced transactions and introduce a structured anomaly detection layer for the dataset.
 
 #### Tasks
 
 **Residual Computation**
 
-- Compute prediction residuals:
-
+- Generate predictions using finalized Ridge model
+- Compute residuals:
   - `residual = actual_price - predicted_price`
-
-- Add residuals to dataset
+- Add to dataset:
+  - `predicted_price`
+  - `residual`
+  - `abs_residual`
 - Validate:
   - distribution of residuals
   - presence of extreme values
 
-**Overpriced / Underpriced Detection**
+**Basic Anomaly Detection (Core MVP)**
 
-- Identify:
+- Identify mispriced transactions using residual magnitude:
   - Top positive residuals → **overpriced properties**
   - Top negative residuals → **undervalued properties**
-- Create ranked tables:
+- Create ranked outputs:
   - Top N overpriced transactions
   - Top N undervalued transactions
-- Include key fields:
-  - district
-  - price
-  - predicted price
-  - residual
+- Keep N small (e.g. 10–20) for clarity
 
-**Z-Score Based Anomaly Detection**
+**Z-Score Standardization (Supporting Layer)**
 
-- Standardize residuals using Z-score:
+- Compute Z-score of residuals:
+  - normalize across dataset
+- Define anomaly threshold:
+  - e.g. |Z| > 2 → potential anomaly
+- Add label column:
+  - `anomaly_flag` (normal / anomalous)
 
-  - detect extreme deviations from mean
+**District-Level Residual Insights**
 
-- Define thresholds:
-  - e.g. |Z| > 2 or 3 → anomaly
-- Label transactions:
-  - normal
-  - moderately anomalous
-  - highly anomalous
-
-**Market Surprise Index (Advanced Signal)**
-
-- Construct composite anomaly score based on:
-  - residual magnitude
-  - normalized within district
-- Purpose:
-  - avoid bias toward high-price districts
-  - highlight truly unusual transactions
-
-**District-Level Anomaly Insights**
-
-- Aggregate residuals at district level:
+- Aggregate residuals by district:
   - mean residual → systematic over/underpricing
-  - variance → market volatility
+  - standard deviation → pricing volatility
 - Identify:
-  - districts consistently overpriced
-  - districts consistently undervalued
+  - consistently overpriced districts
+  - consistently undervalued districts
   - high-variance (unstable) markets
 
-**Output Preparation**
+**Output Artifacts**
 
-- Prepare clean outputs for dashboard:
-  - anomaly tables
-  - summary metrics
-  - labeled dataset with anomaly flags
+- Create clean outputs for reuse:
+  - `anomalies_dataset.csv` (with predictions + residuals + flags)
+  - ranked anomaly tables (top overpriced / undervalued)
+- Keep structure consistent with future dashboard integration
+
+**Implementation Guidelines**
+
+- Keep logic separate from `data_prep.py`
+- Build as standalone module (e.g. `anomaly.py`)
+- Reuse:
+  - trained model artifact
+  - feature set from Day 19
+- Avoid over-engineering:
+  - no composite scoring or complex indices at this stage
 
 #### Key Outcome
 
-- Built a **residual-based anomaly detection system**
+- Built a **residual-based anomaly detection layer**
 - Identified:
   - overpriced properties
   - undervalued opportunities
-- Introduced **market signal layer** beyond raw predictions
-- Created foundation for:
-  - insight storytelling (Day 21)
-  - dashboard intelligence features
+- Introduced a new **analytical signal beyond predictions**
+- Produced structured outputs ready for:
+  - insight generation (Day 21)
+  - dashboard integration (Day 22)
 
 ### 🔄 Day 21 — Insight Engine & Storytelling Layer (Planned)
 
