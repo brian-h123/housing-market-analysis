@@ -9,7 +9,8 @@ __pycache__/
 
 # Jupyter
 .ipynb_checkpoints/
-.html
+*.ipynb
+*.html
 
 # Data files
 *.pkl

@@ -1385,99 +1385,108 @@ Finalize the production-ready model and build an explainability layer to interpr
 
 ---
 
-### 🔄 Day 20 — Anomaly Detection & Residual Analysis (Planned)
+### ✅ Day 20 — Anomaly Detection & Residual Analysis (Completed)
 
 #### Objective
 
 Use model residuals to identify mispriced transactions and introduce a structured anomaly detection layer for the dataset.
 
-#### Tasks
+#### Completed
+
+**Environment & Reproducibility**
+
+- Created `environment.yml` to ensure dependency consistency
+- Ensured compatibility when loading `.pkl` model using `joblib`
+- Improved reproducibility of model-based workflows
+
+**Anomaly Detection Module**
+
+- Developed standalone module `anomaly.py`
+- Reused:
+  - trained Ridge model artifact (Day 19)
+  - `feature_columns` for consistent input structure
+- Maintained clean separation from `data_prep.py`
 
 **Residual Computation**
 
-- Generate predictions using finalized Ridge model
-- Compute residuals:
-  - `residual = actual_price - predicted_price`
-- Add to dataset:
+- Generated predictions using finalized model
+- Computed:
   - `predicted_price`
   - `residual`
   - `abs_residual`
-- Validate:
-  - distribution of residuals
-  - presence of extreme values
+- Applied to **full dataset** for MVP:
+  - Acknowledged potential optimistic bias
+  - Accepted as a practical tradeoff for initial implementation
 
-**Basic Anomaly Detection (Core MVP)**
+**Z-Score Standardization**
 
-- Identify mispriced transactions using residual magnitude:
-  - Top positive residuals → **overpriced properties**
-  - Top negative residuals → **undervalued properties**
-- Create ranked outputs:
-  - Top N overpriced transactions
-  - Top N undervalued transactions
-- Keep N small (e.g. 10–20) for clarity
-
-**Z-Score Standardization (Supporting Layer)**
-
-- Compute Z-score of residuals:
-  - normalize across dataset
-- Define anomaly threshold:
-  - e.g. |Z| > 2 → potential anomaly
-- Add label column:
-  - `anomaly_flag` (normal / anomalous)
+- Standardized residuals using Z-score
+- Enabled cross-dataset comparison of anomalies
+- Established foundation for anomaly thresholding
 
 **District-Level Residual Insights**
 
-- Aggregate residuals by district:
+- Aggregated residuals by district:
   - mean residual → systematic over/underpricing
   - standard deviation → pricing volatility
-- Identify:
-  - consistently overpriced districts
-  - consistently undervalued districts
-  - high-variance (unstable) markets
+- Enabled identification of:
+  - overpriced districts
+  - undervalued districts
+  - high-variance markets
+
+**Data Transformation for Interpretability**
+
+- Reconstructed `district` from one-hot encoded features
+- Improved human readability of outputs
+- Ensured compatibility with downstream analysis and dashboard use
 
 **Output Artifacts**
 
-- Create clean outputs for reuse:
-  - `anomalies_dataset.csv` (with predictions + residuals + flags)
-  - ranked anomaly tables (top overpriced / undervalued)
-- Keep structure consistent with future dashboard integration
-
-**Implementation Guidelines**
-
-- Keep logic separate from `data_prep.py`
-- Build as standalone module (e.g. `anomaly.py`)
-- Reuse:
-  - trained model artifact
-  - feature set from Day 19
-- Avoid over-engineering:
-  - no composite scoring or complex indices at this stage
+- Generated reusable artifacts:
+  - `anomalies_dataset.csv` (predictions + residuals + z-scores)
+  - ranked anomaly outputs (top overpriced / undervalued)
+- Structured outputs for reuse in:
+  - insight generation (Day 21)
+  - dashboard integration (Day 22)
 
 #### Key Outcome
 
-- Built a **residual-based anomaly detection layer**
+- Built a **functional anomaly detection layer** based on model residuals
 - Identified:
-  - overpriced properties
+  - overpriced transactions
   - undervalued opportunities
-- Introduced a new **analytical signal beyond predictions**
-- Produced structured outputs ready for:
-  - insight generation (Day 21)
-  - dashboard integration (Day 22)
+- Introduced standardized anomaly scoring (Z-score)
+- Produced **clean, reusable artifacts** for downstream insight generation
+- Established a strong foundation for:
+  - insight storytelling (Day 21)
+  - ML-powered dashboard features (Day 22)
 
 ### 🔄 Day 21 — Insight Engine & Storytelling Layer (Planned)
 
 #### Objective
 
-Transform model outputs and anomaly signals into clear, structured insights that provide meaningful interpretation of the housing market.
+Transform anomaly detection outputs and model signals into clear, structured, and interpretable insights for understanding housing market behavior.
 
 #### Tasks
 
+**Leverage Existing Artifacts (Primary Input Layer)**
+
+- Use outputs from Day 20:
+  - `anomalies_dataset.csv`
+  - ranked anomaly tables
+- Avoid recomputing:
+  - residuals
+  - z-scores
+  - district aggregations
+- Treat Day 20 outputs as the **single source of truth**
+
 **Insight Structuring**
 
-- Define key categories of insights:
-  - pricing behavior (from Ridge model)
-  - anomalies (from residual analysis)
-  - district-level patterns
-- Ensure insights are:
+- Define core categories of insights:
+  - pricing behavior (model-based expectations)
+  - anomalies (z-score and residual-based signals)
+  - district-level patterns (aggregated residual insights)
+- Ensure all insights are:
   - concise
   - interpretable
   - non-technical
@@ -1485,9 +1494,9 @@ Transform model outputs and anomaly signals into clear, structured insights that
 **District Insight Generation**
 
 - Create district-level summaries based on:
-  - average residual (over/underpricing trend)
-  - residual variance (market stability)
-- Identify and label:
+  - mean residual (over/underpricing trend)
+  - residual standard deviation (market stability)
+- Generate structured summaries:
   - **Most overpriced districts**
   - **Most undervalued districts**
   - **Most volatile districts**
@@ -1499,47 +1508,61 @@ Transform model outputs and anomaly signals into clear, structured insights that
 
   Examples:
 
-  - “District A shows consistent overpricing relative to model predictions”
-  - “District B exhibits high volatility, indicating speculative activity”
-  - “District C remains stable and aligned with expected pricing”
+  - “District A shows consistent overpricing relative to model expectations”
+  - “District B exhibits high pricing volatility, indicating less stable market behavior”
+  - “District C remains closely aligned with predicted values, suggesting pricing efficiency”
 
-- Focus on:
-  - clarity
-  - actionable interpretation
-  - real-world relevance
+- Ensure narratives:
+  - use reconstructed district names (human-readable)
+  - avoid technical jargon (no mention of z-score unless necessary)
+  - focus on **interpretation, not computation**
 
 **Transaction-Level Insights**
 
-- Generate insights for individual anomalies:
-  - highlight top overpriced / undervalued properties
-- Add contextual explanation:
-  - “This property is priced X% above expected value”
-- Ensure explanations are understandable without ML knowledge
+- Use anomaly rankings and z-score thresholds:
+  - highlight top overpriced properties (high positive z-score)
+  - highlight top undervalued properties (low negative z-score)
+- Generate explanation snippets:
 
-**Trend Interpretation Layer**
+  - “This property is priced significantly above expected value”
+  - “This transaction appears undervalued relative to similar properties”
 
-- Extend existing trend charts with interpretation:
-  - not just “what is happening”
-  - but “what it means”
-- Example:
-  - “Recent upward trend suggests increasing demand in selected districts”
+- Optionally include:
+  - % deviation from predicted value for better interpretability
+
+**Insight Framing & Interpretation Layer**
+
+- Add light interpretation to existing findings:
+  - what does overpricing imply?
+  - what does high volatility suggest?
+
+Examples:
+
+- Overpricing → potential demand premium or overvaluation
+- Undervaluation → possible opportunity or data irregularity
+- High variance → heterogeneous or unstable market segment
 
 **Output Preparation**
 
-- Prepare structured outputs for dashboard integration:
-  - district insight tables
+- Structure outputs into reusable formats:
+  - district insight tables (ranked + labeled)
+  - transaction anomaly summaries
   - narrative text blocks
-  - labeled insights (tags / categories)
+- Ensure consistency with:
+  - dashboard schema
+  - filterable fields (district, price, etc.)
 
 #### Key Outcome
 
-- Built an **insight engine** that translates data into meaning
-- Converted model + anomaly outputs into:
-  - **clear narratives**
-  - **decision-oriented insights**
-- Elevated project from:
-  - predictive model → **analytical intelligence system**
-- Established foundation for:
+- Built an **insight engine** that translates anomaly detection outputs into meaningful narratives
+- Converted:
+  - residual signals
+  - z-score anomalies
+  - district-level patterns  
+    into **clear, decision-oriented insights**
+- Established a clean bridge between:
+  - model outputs → human understanding
+- Prepared structured insight outputs for:
   - dashboard integration (Day 22)
 
 ---
