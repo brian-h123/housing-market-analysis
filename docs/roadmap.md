@@ -1465,105 +1465,112 @@ Use model residuals to identify mispriced transactions and introduce a structure
 
 #### Objective
 
-Transform anomaly detection outputs and model signals into clear, structured, and interpretable insights for understanding housing market behavior.
+Transform anomaly detection outputs into **clear, structured, and reusable insights**, focusing on interpretation, narrative generation, and dashboard-ready formatting.
 
 #### Tasks
 
-**Leverage Existing Artifacts (Primary Input Layer)**
+**Use Day 20 Outputs as Source of Truth**
 
-- Use outputs from Day 20:
-  - `anomalies_dataset.csv`
-  - ranked anomaly tables
-- Avoid recomputing:
+- Load and use:
+  - `anomalies_data.csv`
+  - `top_overpriced.csv`
+  - `top_undervalued.csv`
+  - `district_residuals.csv`
+- Do NOT recompute:
   - residuals
   - z-scores
+  - anomaly flags
   - district aggregations
-- Treat Day 20 outputs as the **single source of truth**
 
-**Insight Structuring**
+**Insight Interpretation Layer (Core Shift)**
 
-- Define core categories of insights:
-  - pricing behavior (model-based expectations)
-  - anomalies (z-score and residual-based signals)
-  - district-level patterns (aggregated residual insights)
-- Ensure all insights are:
-  - concise
-  - interpretable
-  - non-technical
+- Interpret existing signals instead of recomputing them:
 
-**District Insight Generation**
+  - `mean_residual` → pricing bias (over / underpricing)
+  - `volatility` → market stability
+  - `residual_z` → anomaly severity
 
-- Create district-level summaries based on:
-  - mean residual (over/underpricing trend)
-  - residual standard deviation (market stability)
-- Generate structured summaries:
-  - **Most overpriced districts**
-  - **Most undervalued districts**
-  - **Most volatile districts**
-- Rank districts across these dimensions
-
-**Market Narratives (Core Deliverable)**
-
-- Translate quantitative findings into narrative statements:
-
-  Examples:
-
-  - “District A shows consistent overpricing relative to model expectations”
-  - “District B exhibits high pricing volatility, indicating less stable market behavior”
-  - “District C remains closely aligned with predicted values, suggesting pricing efficiency”
-
-- Ensure narratives:
-  - use reconstructed district names (human-readable)
-  - avoid technical jargon (no mention of z-score unless necessary)
-  - focus on **interpretation, not computation**
-
-**Transaction-Level Insights**
-
-- Use anomaly rankings and z-score thresholds:
-  - highlight top overpriced properties (high positive z-score)
-  - highlight top undervalued properties (low negative z-score)
-- Generate explanation snippets:
-
-  - “This property is priced significantly above expected value”
-  - “This transaction appears undervalued relative to similar properties”
-
-- Optionally include:
-  - % deviation from predicted value for better interpretability
-
-**Insight Framing & Interpretation Layer**
-
-- Add light interpretation to existing findings:
-  - what does overpricing imply?
-  - what does high volatility suggest?
+- Map raw metrics into **human meaning**
 
 Examples:
 
-- Overpricing → potential demand premium or overvaluation
-- Undervaluation → possible opportunity or data irregularity
-- High variance → heterogeneous or unstable market segment
+- High mean residual → “district tends to be overpriced”
+- High volatility → “pricing is inconsistent / heterogeneous”
+- Extreme z-score → “transaction deviates significantly from expectation”
 
-**Output Preparation**
+**Narrative Generation (Core Deliverable)**
 
-- Structure outputs into reusable formats:
-  - district insight tables (ranked + labeled)
-  - transaction anomaly summaries
-  - narrative text blocks
-- Ensure consistency with:
-  - dashboard schema
-  - filterable fields (district, price, etc.)
+- Convert structured data into human-readable insights:
+
+District-level:
+
+- “District X shows consistent overpricing relative to model expectations”
+- “District Y exhibits high pricing volatility, indicating unstable market behavior”
+
+Transaction-level:
+
+- “This property appears significantly undervalued compared to similar listings”
+- “This transaction is priced well above expected value”
+
+- Ensure:
+  - no technical jargon
+  - no mention of z-score unless necessary
+  - clean, readable district names
+
+**Insight Templates & Reusability**
+
+- Create reusable templates/functions:
+
+  - `generate_district_insight(row)`
+  - `generate_transaction_insight(row)`
+
+- Standardize output format:
+
+  - label (e.g. "Overpriced")
+  - explanation (text)
+  - supporting metrics
+
+**Structured Output for Dashboard**
+
+- Prepare **dashboard-ready data structures**:
+
+District insights:
+
+- top overpriced districts (with labels + explanations)
+- top undervalued districts
+- most volatile districts
+
+Transaction insights:
+
+- top anomalies with:
+
+  - district
+  - actual vs predicted
+  - explanation text
+
+- Format as:
+  - clean DataFrames OR
+  - JSON-like structures for UI consumption
+
+**Optional Enhancement (High ROI, Low Effort)**
+
+- Add % deviation metric:
+
+  - `(actual - predicted) / predicted`
+
+- Improves interpretability vs raw residual
 
 #### Key Outcome
 
-- Built an **insight engine** that translates anomaly detection outputs into meaningful narratives
-- Converted:
-  - residual signals
-  - z-score anomalies
-  - district-level patterns  
-    into **clear, decision-oriented insights**
-- Established a clean bridge between:
-  - model outputs → human understanding
-- Prepared structured insight outputs for:
-  - dashboard integration (Day 22)
+- Built an **interpretation layer** on top of anomaly detection outputs
+- Converted raw model signals into:
+  - human-readable narratives
+  - structured insight objects
+- Eliminated duplication between Day 20 and Day 21
+- Prepared **dashboard-ready insight data**, reducing workload for Day 22
+- Established a clean separation:
+  - Day 20 → computation
+  - Day 21 → interpretation + structuring
 
 ---
 
