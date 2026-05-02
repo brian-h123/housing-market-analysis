@@ -50,6 +50,20 @@ df['residual'] = (df['actual_price'] - df['predicted_price']).round(2)
 df['abs_residual'] = df['residual'].abs()
 
 # ---------------------
+# Z-Score Standardization
+# ---------------------
+
+mean_res = df['residual'].mean()
+std_res = df['residual'].std()
+
+df['residual_z'] = (df['residual'] - mean_res) / std_res
+
+df['anomaly_flag'] = np.where(
+    df['residual_z'].abs() > 2,
+    'anomaly', 'normal'
+)
+
+# ---------------------
 # Basic Anomaly Detection
 # ---------------------
 
@@ -63,25 +77,13 @@ cols = [
     "actual_price",
     "predicted_price",
     "residual",
-    "abs_residual"  
+    "abs_residual",
+    "residual_z",
+    'anomaly_flag'
 ]
 
 top_overpriced = top_overpriced[cols]
 top_undervalued = top_undervalued[cols]
-
-# ---------------------
-# Z-Score Standardization
-# ---------------------
-
-mean_res = df['residual'].mean()
-std_res = df['residual'].std()
-
-df['residual_z'] = (df['residual'] - mean_res) / std_res
-
-df['anomaly_flag'] = np.where(
-    df['residual_z'].abs() > 2,
-    'anomaly', 'normal'
-)
 
 # ---------------------
 # District Level Residual Insight
