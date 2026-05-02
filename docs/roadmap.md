@@ -1461,98 +1461,56 @@ Use model residuals to identify mispriced transactions and introduce a structure
   - insight storytelling (Day 21)
   - ML-powered dashboard features (Day 22)
 
-### 🔄 Day 21 — Insight Engine & Storytelling Layer (Planned)
+### ✅ Day 21 — Insight Engine & Storytelling Layer (Completed)
 
 #### Objective
 
-Transform anomaly detection outputs into **clear, structured, and reusable insights**, focusing on interpretation, narrative generation, and dashboard-ready formatting.
+Transform anomaly detection outputs into **clear, structured, and reusable insights**, enabling interpretation and narrative generation for downstream applications (e.g. dashboard).
 
-#### Tasks
+#### Completed
 
-**Use Day 20 Outputs as Source of Truth**
+**Built insight generation module (`generators.py`)**
 
-- Load and use:
-  - `anomalies_data.csv`
+- Transformed anomaly artifacts into human-readable insights
+- Converted raw signals into interpretable narratives:
+  - `residual` → pricing deviation
+  - `residual_z` → anomaly severity
+  - `anomaly_flag` → clear labeling (normal vs anomaly)
+- Generated structured insights for:
+  - top overpriced transactions
+  - top undervalued transactions
+  - district-level pricing patterns
+
+**Developed orchestration layer (`engine.py`)**
+
+- Centralized logic to assemble and organize insights
+- Combined multiple insight generators into a single pipeline
+- Produced consistent, reusable outputs for downstream consumption
+- Designed for easy integration with dashboard layer (Day 22)
+
+**Enhanced anomaly artifacts (`anomaly.py`)**
+
+- Enriched:
   - `top_overpriced.csv`
   - `top_undervalued.csv`
-  - `district_residuals.csv`
-- Do NOT recompute:
+- Added:
+  - `residual_z` (standardized severity scoring)
+  - `anomaly_flag` (binary anomaly labeling)
+- Improved usability of artifacts for:
+  - ranking
+  - filtering
+  - narrative generation
+
+**Shift from computation → interpretation**
+
+- Reused Day 20 outputs as source of truth
+- Avoided recomputation of:
   - residuals
   - z-scores
   - anomaly flags
-  - district aggregations
+- Focused on translating data into **meaningful insights**
 
-**Insight Interpretation Layer (Core Shift)**
-
-- Interpret existing signals instead of recomputing them:
-
-  - `mean_residual` → pricing bias (over / underpricing)
-  - `volatility` → market stability
-  - `residual_z` → anomaly severity
-
-- Map raw metrics into **human meaning**
-
-Examples:
-
-- High mean residual → “district tends to be overpriced”
-- High volatility → “pricing is inconsistent / heterogeneous”
-- Extreme z-score → “transaction deviates significantly from expectation”
-
-**Narrative Generation (Core Deliverable)**
-
-- Convert structured data into human-readable insights:
-
-District-level:
-
-- “District X shows consistent overpricing relative to model expectations”
-- “District Y exhibits high pricing volatility, indicating unstable market behavior”
-
-Transaction-level:
-
-- “This property appears significantly undervalued compared to similar listings”
-- “This transaction is priced well above expected value”
-
-- Ensure:
-  - no technical jargon
-  - no mention of z-score unless necessary
-  - clean, readable district names
-
-**Insight Templates & Reusability**
-
-- Create reusable templates/functions:
-
-  - `generate_district_insight(row)`
-  - `generate_transaction_insight(row)`
-
-- Standardize output format:
-
-  - label (e.g. "Overpriced")
-  - explanation (text)
-  - supporting metrics
-
-**Structured Output for Dashboard**
-
-- Prepare **dashboard-ready data structures**:
-
-District insights:
-
-- top overpriced districts (with labels + explanations)
-- top undervalued districts
-- most volatile districts
-
-Transaction insights:
-
-- top anomalies with:
-
-  - district
-  - actual vs predicted
-  - explanation text
-
-- Format as:
-  - clean DataFrames OR
-  - JSON-like structures for UI consumption
-
-**Optional Enhancement (High ROI, Low Effort)**
+**Feature Enhancement**
 
 - Add % deviation metric:
 
@@ -1562,104 +1520,105 @@ Transaction insights:
 
 #### Key Outcome
 
-- Built an **interpretation layer** on top of anomaly detection outputs
-- Converted raw model signals into:
-  - human-readable narratives
-  - structured insight objects
-- Eliminated duplication between Day 20 and Day 21
-- Prepared **dashboard-ready insight data**, reducing workload for Day 22
-- Established a clean separation:
-  - Day 20 → computation
-  - Day 21 → interpretation + structuring
+- Built a **modular insight engine** that converts model outputs into narratives
+- Established a clear separation between:
+  - data computation (Day 20)
+  - insight generation (Day 21)
+- Enabled **severity-aware anomaly storytelling** using z-scores and flags
+- Produced **dashboard-ready insight structures** for integration (Day 22)
+- Significantly improved interpretability and usability of model outputs
 
 ---
 
-### 🔄 Day 22 — Dashboard Integration & ML Intelligence Layer (Planned)
+### 🔄 Day 22 — Dashboard Integration & ML Interaction Layer (Planned)
 
 #### Objective
 
-Integrate predictive modeling, anomaly detection, and insights into the Streamlit dashboard to create an intelligent, user-facing analytical product.
+Integrate the **existing ML model (Day 17–19)** and **insight engine (Day 21)** into the Streamlit dashboard as an interactive, user-facing system.
+
+Focus is NOT on generating new intelligence, but on **making existing outputs usable, explorable, and interactive**.
 
 #### Tasks
 
-**Prediction Module**
+**Prediction Simulator**
 
-- Add prediction capability to dashboard:
-  - user selects or inputs a transaction
-  - display:
-    - predicted price per sqm
-    - actual price per sqm
-    - difference (residual)
-- Ensure:
-  - smooth interaction
-  - clear presentation of results
-
-**Anomaly View**
-
-- Create dedicated section for anomalies:
-  - Top overpriced properties
-  - Top undervalued properties
-- Display:
+- Build user-facing input form:
   - district
-  - actual vs predicted price
-  - residual / anomaly score
-- Add sorting and filtering options
-
-**Feature Explanation Panel**
-
-- Introduce “Why this price?” section:
-  - explain prediction using model insights
-- Display:
-  - key contributing factors (from Ridge coefficients)
-  - simplified explanation:
-    - “Location contributes +X”
-    - “Building age reduces value by Y”
-- Focus on interpretability over technical detail
-
-**Insight Integration**
-
-- Embed insights from Day 21 into dashboard:
-  - district insight cards
-  - key findings summaries
-- Ensure insights are:
-  - visible
-  - easy to understand
-  - tied to user-selected filters
-
-**UI/UX Integration**
-
-- Decide placement within existing pages:
-  - Overview → high-level insights
-  - District Analysis → anomaly + district insights
-  - Data Explorer → transaction-level prediction
-- Maintain consistency with existing:
-  - layout
-  - filtering system
-  - design patterns
-
-**Performance & Stability Checks**
-
+  - area
+  - building type
+  - optional: building age, floor level
+- Output:
+  - predicted price per sqm
+  - comparison vs district average
+  - simple interpretation (over/under market)
 - Ensure:
-  - no significant slowdown from ML computations
-  - caching used where appropriate
+  - uses final trained model (Day 19 artifact)
+  - consistent preprocessing pipeline
+
+**Anomaly Explorer**
+
+- Display:
+  - top overpriced transactions
+  - top undervalued transactions
+- Use outputs from Day 20–21 artifacts:
+  - residuals
+  - z-scores
+  - anomaly flags
+- Add interactions:
+  - district filter
+  - severity threshold slider (z-score)
+  - sorting by anomaly strength
+- Optional:
+  - click transaction → view details panel
+
+**Insight Integration (Day 21 Engine Output)**
+
+- Embed outputs from:
+  - `generators.py`
+  - `engine.py`
+- Display:
+  - district-level insights cards
+  - transaction-level explanations
+- Ensure:
+  - NO recomputation
+  - only render precomputed insights
+- Group insights by:
+  - district
+  - anomaly severity
+
+**Unified ML Experience Layer**
+
+- Create a connected workflow across features:
+  - Prediction module → shows expected value
+  - Anomaly section → shows mispriced cases
+  - Insight section → explains WHY
+- Ensure smooth navigation between:
+  - Overview → Insights → Anomalies → Prediction
+
+**UX & Integration Checks**
+
+- Ensure consistent filtering across:
+  - model predictions
+  - anomalies
+  - insights
 - Validate:
-  - predictions align with backend model
-  - anomaly calculations are consistent
+  - prediction model alignment with anomaly outputs
+  - no duplicate computation across modules
+- Optimize:
+  - caching for model inference
+  - fast UI updates
 
 #### Key Outcome
 
-- Transformed dashboard into an **ML-powered analytical tool**
+- Dashboard becomes an **interactive ML decision system**
 - Users can:
-  - see predictions
-  - identify mispriced properties
-  - understand pricing drivers
-- Integrated:
-  - model outputs
-  - anomaly detection
-  - insights
-    into a unified user experience
-- Marks transition from:
-  - dashboard → **intelligent decision-support system**
+  - simulate property pricing
+  - explore mispriced transactions
+  - understand district-level market behavior
+- Clear separation established:
+  - Day 20 → computation (anomalies)
+  - Day 21 → interpretation (insights)
+  - Day 22 → interaction (user-facing ML system)
 
 ### 🔄 Day 23 — Final Polish & Product Narrative (Planned)
 
