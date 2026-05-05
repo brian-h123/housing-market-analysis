@@ -25,6 +25,10 @@ def render_anomaly_explorer(df):
         ['All', 'Overpriced', 'Undervalued']
     )
 
+    if not selected_districts:
+        st.warning("Please select at least one district")
+        return
+
     input_data = {
         'districts': selected_districts,
         'z_threshold': z_threshold,
@@ -44,5 +48,5 @@ def render_anomaly_explorer(df):
             'residual', 
             'residual_z', 
             'anomaly_flag'
-        ]].sort_values('residual_z', ascending=False)
+        ]].sort_values('residual_z', key=lambda x: x.abs(), ascending=False)
     )
