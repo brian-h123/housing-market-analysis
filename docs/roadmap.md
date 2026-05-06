@@ -1530,195 +1530,243 @@ Transform anomaly detection outputs into **clear, structured, and reusable insig
 
 ---
 
-### 🔄 Day 22 — Dashboard Integration & ML Interaction Layer (Planned)
+### ✅ Day 22 — Dashboard Integration & ML Interaction Layer (Completed)
 
 #### Objective
 
-Integrate the **existing ML model (Day 17–19)** and **insight engine (Day 21)** into the Streamlit dashboard as an interactive, user-facing system.
+Integrate the **final ML model (Day 17–19)** and **insight engine (Day 21)** into the Streamlit dashboard, transforming the application into an interactive, user-facing **ML-powered analytical system**.
 
-Focus is NOT on generating new intelligence, but on **making existing outputs usable, explorable, and interactive**.
+#### Completed
 
-#### Tasks
+**Service Layer Architecture**
+
+- Introduced a dedicated `services/` module to decouple logic from UI:
+  - `ml_service.py` → handles model loading, preprocessing, and prediction
+  - `anomaly_service.py` → manages anomaly dataset and filtering logic
+  - `insight_service.py` → loads and structures precomputed insights
+- Ensured:
+  - no recomputation of artifacts
+  - consistent reuse of outputs from Day 19–21
+- Improved separation of concerns between:
+  - data / ML logic (services)
+  - presentation layer (dashboard UI)
+
+**ML Lab Page (New Dashboard Section)**
+
+- Created a new page: **“ML Lab”**
+- Serves as a centralized interface for all ML-powered features:
+  - prediction
+  - anomaly exploration
+  - insight consumption
+- Integrated into existing multi-page navigation structure
 
 **Prediction Simulator**
 
-- Build user-facing input form:
-  - district
-  - area
-  - building type
-  - optional: building age, floor level
-- Output:
+- Built an interactive input module:
+  - inputs:
+    - district
+    - building type
+    - area
+    - building age
+- Outputs:
   - predicted price per sqm
-  - comparison vs district average
-  - simple interpretation (over/under market)
-- Ensure:
-  - uses final trained model (Day 19 artifact)
-  - consistent preprocessing pipeline
+- Ensured:
+  - full alignment with trained Ridge model (Day 19)
+  - consistent preprocessing using saved feature columns
+- Provides a simple, user-driven way to **simulate property valuation**
 
 **Anomaly Explorer**
 
-- Display:
+- Integrated anomaly outputs from Day 20:
+  - residuals
+  - z-scores (`residual_z`)
+  - anomaly flags
+- Enabled interactive exploration:
+  - filter by district
+  - sort by anomaly strength (overpriced / undervalued)
+  - inspect transaction-level details
+- Displays:
   - top overpriced transactions
   - top undervalued transactions
-- Use outputs from Day 20–21 artifacts:
-  - residuals
-  - z-scores
-  - anomaly flags
-- Add interactions:
-  - district filter
-  - severity threshold slider (z-score)
-  - sorting by anomaly strength
-- Optional:
-  - click transaction → view details panel
+- Transforms static anomaly outputs into an **explorable analytical tool**
 
-**Insight Integration (Day 21 Engine Output)**
+**Insight Layer Integration**
 
-- Embed outputs from:
-  - `generators.py`
-  - `engine.py`
-- Display:
-  - district-level insights cards
-  - transaction-level explanations
-- Ensure:
-  - NO recomputation
-  - only render precomputed insights
-- Group insights by:
-  - district
-  - anomaly severity
+- Embedded outputs from Day 21 insight engine:
+  - district-level insights
+  - transaction-level narratives
+- Displays:
+  - top overpriced / undervalued districts
+  - key anomaly-driven observations
+- Ensured:
+  - insights are precomputed and directly rendered
+  - no duplication of computation logic
+- Bridges gap between:
+  - raw anomaly signals
+  - human-readable explanations
 
-**Unified ML Experience Layer**
+**Unified ML Experience**
 
-- Create a connected workflow across features:
-  - Prediction module → shows expected value
-  - Anomaly section → shows mispriced cases
-  - Insight section → explains WHY
-- Ensure smooth navigation between:
-  - Overview → Insights → Anomalies → Prediction
+- Connected all components into a cohesive workflow:
+  - **Prediction → Anomaly → Insight**
+- Users can:
+  - estimate expected pricing (prediction)
+  - compare against real mispriced cases (anomalies)
+  - understand underlying patterns (insights)
+- Established a clear progression from:
+  - model output → interpretation → decision support
 
-**UX & Integration Checks**
+**Integration & Consistency Validation**
 
-- Ensure consistent filtering across:
+- Verified alignment across:
   - model predictions
-  - anomalies
-  - insights
-- Validate:
-  - prediction model alignment with anomaly outputs
-  - no duplicate computation across modules
-- Optimize:
-  - caching for model inference
-  - fast UI updates
+  - anomaly residuals
+  - insight narratives
+- Ensured:
+  - consistent feature usage across modules
+  - no mismatch between prediction and anomaly logic
+- Applied caching where necessary to:
+  - optimize model inference
+  - maintain responsive UI
 
 #### Key Outcome
 
-- Dashboard becomes an **interactive ML decision system**
+- Dashboard evolves into a **fully interactive ML-powered system**
 - Users can:
-  - simulate property pricing
-  - explore mispriced transactions
-  - understand district-level market behavior
-- Clear separation established:
-  - Day 20 → computation (anomalies)
-  - Day 21 → interpretation (insights)
-  - Day 22 → interaction (user-facing ML system)
+  - simulate property prices
+  - explore overpriced / undervalued transactions
+  - interpret market behavior through structured insights
+- Successfully integrates:
+  - Day 19 → model (prediction)
+  - Day 20 → anomaly detection (signals)
+  - Day 21 → insight engine (interpretation)
+- Establishes a complete pipeline from:
+  - **data → model → insight → user interaction**
 
 ### 🔄 Day 23 — Final Polish & Product Narrative (Planned)
 
 #### Objective
 
-Refine the dashboard into a cohesive, polished product by improving presentation, clarifying model decisions, and consolidating key insights into a strong final narrative.
+Refine the dashboard into a cohesive, polished **ML-powered analytical product** by:
+
+- unifying the user experience across prediction, anomaly, and insight modules
+- clearly communicating how the model works and how outputs should be interpreted
+- consolidating key findings into a strong, user-facing narrative
 
 #### Tasks
 
-**Model Explanation Section**
+**ML System Explanation (Clarity Layer)**
 
 - Create a dedicated section explaining:
   - what model is used (Ridge Regression)
   - why it was selected:
-    - best performance from Day 18
-    - strong interpretability
-    - stability with current feature set
-- Summarize key pricing drivers:
+    - best performance (Day 18)
+    - stability and interpretability
+- Explain how the system works end-to-end:
+  - prediction → expected price
+  - residual → mispricing signal
+  - z-score → anomaly severity
+  - insights → interpretation layer
+- Highlight key pricing drivers:
   - district (location premium)
   - area (size effect)
   - building_age (depreciation)
-- Keep explanation:
+- Keep explanations:
   - concise
-  - non-technical
-  - accessible to end users
+  - visual where possible
+  - non-technical and user-friendly
+
+**Unified ML Workflow UX**
+
+- Improve flow within **ML Lab page**:
+  - guide users through:
+    - Step 1: Predict a property
+    - Step 2: Compare with anomaly cases
+    - Step 3: Read insights
+- Add visual cues / section headers to reinforce flow
+- Enable light cross-linking:
+  - from prediction → show similar anomaly examples
+  - from anomaly → optionally prefill prediction inputs
+- Ensure experience feels like a **connected system**, not separate tools
 
 **Key Insights Page (Core Deliverable)**
 
-- Compile top insights from entire project:
-  - pricing structure (from Day 19)
-  - anomaly findings (Day 20)
-  - district patterns (Day 21)
+- Create a dedicated **“Key Insights” page**
+- Consolidate top findings from:
+  - model behavior (Day 19)
+  - anomaly detection (Day 20)
+  - insight engine (Day 21)
 - Present as:
-  - “Top 5 Market Insights” (or similar)
-- Ensure each insight is:
-  - clear
-  - impactful
-  - supported by data
+  - “Top 5–7 Market Insights”
+- Each insight should:
+  - be clear and concise
+  - include supporting metric or observation
+  - reflect real patterns (not generic statements)
 
 **Dashboard UX & Visual Polish**
 
-- Improve overall layout:
-  - consistent spacing and alignment
-  - clear section hierarchy
-- Standardize formatting:
-  - numbers (currency, commas)
-  - labels and titles
+- Improve layout consistency:
+  - spacing, alignment, section hierarchy
+- Standardize:
+  - number formatting (currency, commas)
+  - chart titles and labels
+- Add short helper text:
+  - explain charts, metrics, anomaly meaning
 - Remove:
+  - debug outputs
   - redundant elements
-  - technical/debug outputs
-- Ensure smooth navigation across pages
+  - overly technical wording
 
-**Clarity & Usability Improvements**
-
-- Add explanatory text where needed:
-  - clarify charts and metrics
-  - guide user interpretation
-- Ensure all components answer:
-  - “What am I looking at?”
-  - “Why does it matter?”
-
-**Consistency Validation**
+**Consistency & Logic Validation**
 
 - Verify consistency across:
-  - filters
-  - metrics
-  - model outputs
-  - insight displays
-- Check:
-  - prediction vs anomaly alignment
-  - district insights match underlying data
-- Test edge cases:
-  - small datasets
-  - extreme filters
-  - empty states
-
-**Final Review & Cleanup**
-
-- Conduct full walkthrough of dashboard:
-  - validate user flow from Overview → Insights → Details
-- Fix:
-  - UI inconsistencies
-  - labeling issues
-  - minor bugs
+  - prediction outputs vs anomaly residuals
+  - district insights vs aggregated data
 - Ensure:
-  - no broken components
-  - no confusing outputs
+  - same feature pipeline is used everywhere
+  - no hidden discrepancies between modules
+- Test edge cases:
+  - extreme inputs in prediction
+  - empty anomaly filters
+  - small datasets
+
+**Final Product Review**
+
+- Perform full walkthrough:
+  - Overview → District Analysis → Trends → ML Lab → Insights
+- Evaluate:
+  - clarity of user journey
+  - logical flow between pages
+- Fix:
+  - minor UI issues
+  - confusing labels
+  - broken or inconsistent interactions
+
+**Model Validation & Decision Guidance (Trust Layer)**
+
+- Add a simple model performance section:
+  - RMSE / MAE (translated into intuitive terms)
+  - Example: “Typical prediction error is ±X%”
+- Clarify when to trust the model:
+  - performs better in high-volume districts
+  - less reliable for rare property types
+- Provide decision guidance:
+  - Overpriced → potential overvaluation / negotiation signal
+  - Undervalued → potential opportunity
+  - Use prediction + anomaly + insight together
+- Add short “How to use this tool” section:
+  - Step-by-step interpretation for users
 
 #### Key Outcome
 
-- Delivered a **fully polished, end-to-end analytical product**
+- Deliver a **cohesive, end-to-end ML analytical product**
 - Clearly communicates:
-  - how the model works
-  - what drives pricing
-  - where market opportunities exist
-- Combines:
-  - data analysis
-  - machine learning
-  - insights
-    into a **cohesive user experience**
+  - how pricing is estimated
+  - how mispricing is detected
+  - what insights can be derived
+- Transforms the project from:
+  - “dashboard with ML features”
+    → into a **decision-support system**
 - Marks completion of Phase 3:
   - from predictive modeling → **decision-support system**
 
