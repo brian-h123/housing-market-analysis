@@ -62,7 +62,7 @@ def build_district_insights(district_stats):
             generate_district_insight(row)
             for _, row in top_overpriced.iterrows()
         ],
-        'undervalues': [
+        'undervalued': [
             generate_district_insight(row)
             for _, row in top_undervalued.iterrows()
         ],

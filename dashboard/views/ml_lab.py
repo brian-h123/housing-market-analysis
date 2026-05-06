@@ -7,6 +7,7 @@ from components.filters_ui import render_filter_sidebar, render_filter_summary
 
 from components.prediction import render_prediction_widget
 from components.anomaly_explorer import render_anomaly_explorer
+from components.market_insights import render_market_insights
 
 def app():
     st.title("ML Lab")
@@ -18,6 +19,11 @@ def app():
         st.error(str(e))
         st.stop()
 
-    # render_prediction_widget(df)
+    tab1, tab2, tab3 = st.tabs(['Prediction Simulator', 'Anomaly Explorer', 'Insights'])
 
-    render_anomaly_explorer(df)
+    with tab1:
+        render_prediction_widget(df)
+    with tab2:
+        render_anomaly_explorer(df)
+    with tab3:
+        render_market_insights()
