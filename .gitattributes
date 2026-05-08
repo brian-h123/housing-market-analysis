@@ -1,3 +1,4 @@
 *.ipynb text eol=lf
+*.ipynb linguist-vendored
 *.py text eol=lf
 *.md text eol=lf
