@@ -1,21 +1,6 @@
 from services.insight_service import InsightService
 import streamlit as st
 
-def render_insight_card(text):
-    st.markdown(f"""
-    - {text}
-    """)
-
-def render_insight_block(title, insights):
-    st.subheader(title)
-
-    if not insights:
-        st.info("No insights available.")
-        return
-
-    for item in insights[:5]:
-        render_insight_card(item)
-
 def render_district_insight(title, insights):
     st.subheader(title)
 
@@ -66,12 +51,13 @@ def render_transaction_insight(title, insights):
             - Actual Price: {metrics.get('actual_price'):,.0f}
             - Predicted Price: {metrics.get('predicted_price'):,.0f}
             - Difference: {metrics.get('residual'):,.0f}
-            - Percentage Difference: {metrics.get('pct_diff'):.2f}%
+            - Percentage Difference: {metrics.get('pct_diff') * 100:.2f}%
             """)
 
 
 def render_market_insights():
     st.header("🧠 Market Insights")
+    st.caption("Interpret patterns behind pricing behavior using model-driven insights.")
 
     service = InsightService()
 
@@ -85,10 +71,6 @@ def render_market_insights():
         "🔻 Undervalued Districts",
         district_data.get('undervalued', [])
     )
-    # render_insight_block(
-    #     "⚠️ High Volatility Districts",
-    #     district_data.get('volatile', [])
-    # )
 
     st.subheader("📍 Transaction-Level Insights")
     tx_data = service.get_transaction_insights()
