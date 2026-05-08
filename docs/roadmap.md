@@ -1643,7 +1643,7 @@ Integrate the **final ML model (Day 17–19)** and **insight engine (Day 21)** i
 - Establishes a complete pipeline from:
   - **data → model → insight → user interaction**
 
-### 🔄 Day 23 — Final Polish & Product Narrative (Planned)
+### ✅ Day 23 — Final Polish & Product Narrative (Completed)
 
 #### Objective
 
@@ -1653,122 +1653,222 @@ Refine the dashboard into a cohesive, polished **ML-powered analytical product**
 - clearly communicating how the model works and how outputs should be interpreted
 - consolidating key findings into a strong, user-facing narrative
 
-#### Tasks
+#### Completed
+
+**Key Insights Page (New Core Page)**
+
+- Created a dedicated **“Key Insights” page**
+- Consolidates outputs from:
+  - model behavior (Day 19)
+  - anomaly detection (Day 20)
+  - insight engine (Day 21)
+- Structured insights into clear, digestible summaries:
+  - highlights key market patterns
+  - surfaces most important findings (overpricing, undervaluation, district trends)
+- Transforms scattered analytical outputs into a **central narrative layer**
+- Provides users with a quick understanding of **“what matters most” in the market**
+
+**Trust Layer (Model Transparency & Reliability)**
+
+- Introduced a **trust and explanation layer** within the dashboard
+- Clearly communicates:
+  - model used: **Ridge Regression**
+  - rationale for selection:
+    - best performance (Day 18)
+    - stability and interpretability
+- Added model performance context:
+  - RMSE / MAE translated into intuitive understanding
+  - clarifies expected prediction error range
+- Provided guidance on model reliability:
+  - performs better in high-volume / well-represented segments
+  - less reliable for rare or extreme cases
+- Helps users understand:
+  - when to trust predictions
+  - how to interpret outputs responsibly
 
 **ML System Explanation (Clarity Layer)**
 
-- Create a dedicated section explaining:
-  - what model is used (Ridge Regression)
-  - why it was selected:
-    - best performance (Day 18)
-    - stability and interpretability
-- Explain how the system works end-to-end:
+- Implemented a clear explanation of the end-to-end ML workflow:
   - prediction → expected price
   - residual → mispricing signal
   - z-score → anomaly severity
   - insights → interpretation layer
-- Highlight key pricing drivers:
-  - district (location premium)
+- Highlighted key pricing drivers:
+  - district (location effect)
   - area (size effect)
-  - building_age (depreciation)
-- Keep explanations:
+  - building age (depreciation)
+- Ensured explanations are:
   - concise
-  - visual where possible
-  - non-technical and user-friendly
+  - non-technical
+  - accessible to target users (property analysts)
 
-**Unified ML Workflow UX**
+**Unified Product Narrative**
 
-- Improve flow within **ML Lab page**:
-  - guide users through:
-    - Step 1: Predict a property
-    - Step 2: Compare with anomaly cases
-    - Step 3: Read insights
-- Add visual cues / section headers to reinforce flow
-- Enable light cross-linking:
-  - from prediction → show similar anomaly examples
-  - from anomaly → optionally prefill prediction inputs
-- Ensure experience feels like a **connected system**, not separate tools
-
-**Key Insights Page (Core Deliverable)**
-
-- Create a dedicated **“Key Insights” page**
-- Consolidate top findings from:
-  - model behavior (Day 19)
-  - anomaly detection (Day 20)
-  - insight engine (Day 21)
-- Present as:
-  - “Top 5–7 Market Insights”
-- Each insight should:
-  - be clear and concise
-  - include supporting metric or observation
-  - reflect real patterns (not generic statements)
+- Connected all ML components into a coherent story:
+  - **Prediction → Anomaly → Insight**
+- Reinforced how each layer contributes to decision-making:
+  - prediction → benchmark value
+  - anomaly → identify mispricing
+  - insight → explain patterns
+- Shifted dashboard perception from:
+  - separate analytical tools  
+    → to a **single decision-support system**
 
 **Dashboard UX & Visual Polish**
 
-- Improve layout consistency:
-  - spacing, alignment, section hierarchy
-- Standardize:
-  - number formatting (currency, commas)
-  - chart titles and labels
-- Add short helper text:
-  - explain charts, metrics, anomaly meaning
-- Remove:
-  - debug outputs
+- Improved layout consistency across pages:
+  - clearer section hierarchy
+  - better spacing and alignment
+- Standardized formatting:
+  - currency and numeric display
+  - chart titles and labeling conventions
+- Added helper text and explanations:
+  - clarifies meaning of metrics, anomalies, and outputs
+- Removed:
   - redundant elements
-  - overly technical wording
+  - overly technical or debug-oriented content
+- Enhanced overall usability and readability
 
-**Consistency & Logic Validation**
+**Consistency & Integration Validation**
 
-- Verify consistency across:
-  - prediction outputs vs anomaly residuals
-  - district insights vs aggregated data
-- Ensure:
-  - same feature pipeline is used everywhere
-  - no hidden discrepancies between modules
-- Test edge cases:
-  - extreme inputs in prediction
-  - empty anomaly filters
-  - small datasets
+- Verified alignment across:
+  - prediction outputs
+  - anomaly residuals
+  - insight narratives
+- Ensured:
+  - consistent feature pipeline across all modules
+  - no discrepancies between model and dashboard outputs
+- Tested edge cases:
+  - extreme prediction inputs
+  - filtered / empty anomaly datasets
+- Confirmed stability and correctness of the full system
 
-**Final Product Review**
+**End-to-End Product Review**
 
-- Perform full walkthrough:
-  - Overview → District Analysis → Trends → ML Lab → Insights
-- Evaluate:
-  - clarity of user journey
+- Performed full walkthrough of user journey:
+  - Overview → District Analysis → Trends → ML Lab → Key Insights
+- Evaluated:
+  - clarity of navigation
   - logical flow between pages
-- Fix:
-  - minor UI issues
-  - confusing labels
-  - broken or inconsistent interactions
-
-**Model Validation & Decision Guidance (Trust Layer)**
-
-- Add a simple model performance section:
-  - RMSE / MAE (translated into intuitive terms)
-  - Example: “Typical prediction error is ±X%”
-- Clarify when to trust the model:
-  - performs better in high-volume districts
-  - less reliable for rare property types
-- Provide decision guidance:
-  - Overpriced → potential overvaluation / negotiation signal
-  - Undervalued → potential opportunity
-  - Use prediction + anomaly + insight together
-- Add short “How to use this tool” section:
-  - Step-by-step interpretation for users
+- Refined:
+  - labels and descriptions
+  - interaction flow
+  - minor UI inconsistencies
 
 #### Key Outcome
 
-- Deliver a **cohesive, end-to-end ML analytical product**
-- Clearly communicates:
-  - how pricing is estimated
-  - how mispricing is detected
-  - what insights can be derived
+- Dashboard is now a **fully polished, end-to-end ML-powered analytical product**
+- Successfully integrates:
+  - prediction (model)
+  - anomaly detection (signals)
+  - insight generation (interpretation)
+- Provides:
+  - clear explanations of how the system works
+  - guidance on how to interpret outputs
+  - a centralized narrative via the Key Insights page
 - Transforms the project from:
-  - “dashboard with ML features”
-    → into a **decision-support system**
-- Marks completion of Phase 3:
-  - from predictive modeling → **decision-support system**
+  - “dashboard with ML features”  
+    → into a **decision-support system for property analysis**
+
+---
+
+## ✅ Phase 3 Summary — Data Science & Predictive Intelligence
+
+Phase 3 successfully transforms the project from an analytical dashboard into a **predictive, insight-driven decision-support system**.
+
+### What Was Achieved
+
+- Built a complete **machine learning pipeline**:
+
+  - data preparation → feature engineering → model training → evaluation → deployment artifacts
+
+- Developed a **production-ready prediction model**:
+
+  - selected **Ridge Regression** as the final model
+  - optimized for:
+    - performance
+    - stability
+    - interpretability
+
+- Introduced **predictive capabilities**:
+
+  - estimate property price per sqm based on user inputs
+  - enabled interactive prediction via dashboard (ML Lab)
+
+- Implemented **anomaly detection system**:
+
+  - computed residuals between actual vs predicted prices
+  - standardized anomalies using **z-score**
+  - identified:
+    - overpriced transactions
+    - undervalued opportunities
+
+- Built a **structured insight engine**:
+
+  - transformed raw model outputs into human-readable narratives
+  - generated:
+    - transaction-level insights
+    - district-level pricing patterns
+  - introduced severity-aware interpretation using:
+    - residuals
+    - z-scores
+    - anomaly flags
+
+- Integrated **ML features into the dashboard**:
+
+  - ML Lab page:
+    - prediction simulator
+    - anomaly explorer
+    - insight display
+  - unified workflow:
+    - **Prediction → Anomaly → Insight**
+
+- Added **product narrative and trust layer**:
+
+  - Key Insights page:
+    - consolidates top findings across model and anomalies
+  - Model explanation:
+    - how predictions are generated
+    - key pricing drivers
+  - Performance transparency:
+    - RMSE / MAE explained in intuitive terms
+  - Reliability guidance:
+    - when to trust (and not trust) the model
+
+- Achieved **end-to-end system integration**:
+  - consistent feature pipeline across:
+    - model
+    - anomaly detection
+    - dashboard
+  - reusable artifacts:
+    - model
+    - feature columns
+    - anomaly datasets
+    - insights outputs
+
+### Key Outcome
+
+- The project evolves into a **full ML-powered analytical system**
+- Users can:
+
+  - estimate property prices (prediction)
+  - identify mispriced transactions (anomaly detection)
+  - understand market behavior (insights)
+
+- Establishes a complete pipeline:
+
+  - **data → model → anomaly → insight → user decision**
+
+- Delivers a **decision-support tool** that combines:
+  - predictive modeling
+  - statistical validation
+  - human-readable interpretation
+
+---
+
+**Phase 3 Conclusion:**
+
+A successful transition from **interactive dashboard → predictive intelligence system**, delivering meaningful, explainable, and actionable insights for property analysts.
 
 ---
 
