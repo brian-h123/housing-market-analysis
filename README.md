@@ -1,15 +1,76 @@
-# Taiwan Housing Data Pipeline
+# Taiwan Housing Analytics Platform
 
-Simple ETL pipeline that fetches Taiwan real estate transaction data, cleans it, and stores it in a local SQLite database.  
-Data is sourced from Taiwan’s Ministry of the Interior open data portal.  
-Main goal is to build a foundation for future housing price analysis and visualization.  
-Currently at MVP stage with basic ingestion and storage functionality.
+An end-to-end data science project that transforms raw Taiwan housing transaction data into an interactive analytical and machine learning-powered dashboard.
 
-## 📊 Exploratory Data Analysis
+The system includes:
 
-- 📓 Notebook (code + full analysis):
+- Data cleaning & feature engineering pipeline
+- Exploratory data analysis & insights
+- Machine learning price prediction model
+- Anomaly detection system
+- Interactive Streamlit dashboard
 
-  - notebooks/eda_day4_5_6.ipynb
+## System Architecture
 
-- 🌐 Clean HTML version (recommended for quick viewing):
-  - notebooks/eda_day4_5_6.html
+Raw Data
+↓
+Data Ingestion (ingestion.py)
+↓
+Feature Engineering (data_prep.py)
+↓
+ML Model Training (final_model.py)
+↓
+Artifact Generation:
+
+- model.pkl
+- feature_columns.json
+- anomalies_dataset.csv
+- insights artifacts
+  ↓
+  Streamlit Dashboard (dashboard/app.py)
+  ↓
+  ML Lab + Insights + Visualization
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+conda env create -f environment.yml
+conda activate taiwan-housing
+```
+
+### 2. Run data pipeline (required first time only)
+
+```bash
+python ingestion.py
+python data_prep.py
+```
+
+### 3. Train ML model (required for ML features)
+
+```bash
+python final_model.py
+```
+
+### 4. Genrate anomaly + insight artifacts
+
+```bash
+python anomaly.py
+python engine.py
+```
+
+### 5. Run Dashbaord
+
+```bash
+streamlit run dashboard/app.py
+```
+
+## Recommended Execution Order
+
+1. ingestion.py
+2. data_prep.py
+3. final_model.py
+4. anomaly.py
+5. engine.py
+6. streamlit run dashboard/app.py
