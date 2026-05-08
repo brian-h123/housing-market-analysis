@@ -74,3 +74,20 @@ streamlit run dashboard/app.py
 4. anomaly.py
 5. engine.py
 6. streamlit run dashboard/app.py
+
+## Notebooks
+
+Exploratory and experimental notebooks are stored under `/archive/notebooks`.
+
+These include:
+
+- early EDA
+- model experimentation
+- explainability analysis
+
+The production system is fully implemented in modular Python scripts under:
+
+- `data/`
+- `ml/`
+- `insights/`
+- `dashboard/`
