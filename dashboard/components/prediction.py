@@ -4,6 +4,7 @@ from services.ml_service import PredictionService
 
 def render_prediction_widget(df, show_debug=False):
     st.subheader("🏠 Price Prediction Simulator")
+    st.caption("Estimate the expected pprice per sqm based on property features.")
 
     with st.form('prediction form'):
         district = st.selectbox(

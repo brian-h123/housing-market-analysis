@@ -69,8 +69,8 @@ df['anomaly_flag'] = np.where(
 
 df_sorted = df.sort_values('residual', ascending=True)
 
-top_overpriced = df_sorted.head(20)
-top_undervalued = df_sorted.tail(20)
+top_undervalued = df_sorted.head(20)
+top_overpriced = df_sorted.tail(20)
 
 cols = [
     "district",

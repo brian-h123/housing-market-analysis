@@ -29,7 +29,7 @@ def generate_district_insight(row):
     }
 
 def generate_transaction_insight(row):
-    if row['residual'] < 0:
+    if row['residual'] > 0:
         label = 'Overpriced'
     else:
         label = 'Undervalued'

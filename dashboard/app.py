@@ -9,7 +9,7 @@ def main():
 
     page = st.sidebar.selectbox(
         "Navigation",
-        ['Overview', 'District Analysis', 'Trends', 'Data Explorer', 'ML Lab']
+        ['Overview', 'District Analysis', 'Trends', 'Data Explorer', 'ML Lab', 'Key Insights']
     )
 
     if page == 'Overview':
@@ -31,6 +31,10 @@ def main():
     elif page == 'ML Lab':
         from views import ml_lab
         ml_lab.app()
+
+    elif page == 'Key Insights':
+        from views import key_insights
+        key_insights.app()
 
 if __name__ == "__main__":
     main()

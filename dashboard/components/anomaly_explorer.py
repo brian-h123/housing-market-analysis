@@ -4,6 +4,10 @@ from services.anomaly_service import AnomalyExplorer
 
 def render_anomaly_explorer(df):
     st.subheader("🚨 Market Anomalies")
+    st.caption("""
+    See how real transactions differ from model predictions.
+    Large deviations may indicate overpricing or undervaluation.
+    """)
 
     districts = sorted(df['district'].unique())
     selected_districts = st.multiselect(
